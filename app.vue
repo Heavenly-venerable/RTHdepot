@@ -2,10 +2,8 @@
 </script>
 
 <template>
-  <div>
-    <div>
-      <NuxtPage />
-    </div>
+  <div class="w-full min-h-screen p-4">
+    <NuxtPage />
   </div>
 </template>
 

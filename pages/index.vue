@@ -1,8 +1,11 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div class="pt-24">
-    Hello Sweatie
+  <div class="p-8">
+    page: index
+    <NuxtLink to="/invoices/create">
+      <Button label="Create" />
+    </NuxtLink>
   </div>
 </template>
 
