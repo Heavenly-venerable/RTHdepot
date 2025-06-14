@@ -1,10 +1,25 @@
 <script setup lang="ts">
 const { data: invoices } = useFetch("/api/invoices")
+
+const formatCurrency = (val: number) => {
+  return val.toLocaleString("id-ID", { style: "currency", currency: "IDR" })
+}
+
+const calculateTotal = (items) => {
+  return items.reduce((total, item) => item.quantity * item.price + total, 0)
+}
 </script>
 
 <template>
-  <div>
+  <div class="space-y-4">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-semibold">Daftar Invoice</h2>
+      <NuxtLink to="/invoices/create">
+        <Button label="New Invoice" icon="pi pi-plus" />
+      </NuxtLink>
+    </div>
     <DataTable :value="invoices" showGridlines scrollable tableStyle="min-width: 50rem">
+      <Column field="id" header="Invoice ID" />
       <Column field="supplier" header="Supplier"></Column>
       <Column header="Jumlah Ikan">
         <template #body="slotProps">
@@ -13,14 +28,7 @@ const { data: invoices } = useFetch("/api/invoices")
       </Column>
       <Column header="Total Harga">
         <template #body="slotProps">
-          {{slotProps.data.items.reduce((total, item) => item.quantity * item.price + total, 0)}}
-        </template>
-      </Column>
-      <Column :exportable="false">
-        <template #body="slotProps">
-          <Button icon="pi pi-pencil" outlined rounded class="mr-2" severity="contrast"
-            @click="editProduct(slotProps.data)" />
-          <Button icon="pi pi-trash" outlined rounded severity="danger" @click="confirmDeleteProduct(slotProps.data)" />
+          {{ formatCurrency(calculateTotal(slotProps.data.items)) }}
         </template>
       </Column>
     </DataTable>

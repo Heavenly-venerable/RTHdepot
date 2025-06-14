@@ -3,8 +3,8 @@
 <template>
   <div class="p-8">
     page: index
-    <NuxtLink to="/invoices/create">
-      <Button label="Create" />
+    <NuxtLink to="/invoices">
+      <Button label="Invoices" />
     </NuxtLink>
   </div>
 </template>
