@@ -2,6 +2,7 @@ import { invoices } from "../data/invoices"
 import { Invoice } from "../models/invoice.model"
 import type { InvoiceInterface } from "../types/invoice"
 import { CreateInvoiceSchema } from "../schemas/invoice"
+import { products } from "../data/products"
 
 export const InvoiceController = {
   async getAllInvoices() {
@@ -19,6 +20,17 @@ export const InvoiceController = {
     }
 
     const { items } = parsed.data
+
+    for (const item of items) {
+      const product = products.find(p => p.id === item.product.id)
+      if (!product) {
+        return {
+          success: false,
+          message: `Product dengan ID ${item.product.id} tidak ditemukan`
+        }
+      }
+      product.stock += item.quantity
+    }
 
     const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
 
