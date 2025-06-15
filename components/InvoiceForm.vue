@@ -1,4 +1,20 @@
 <script setup lang="ts">
+import { z } from "zod"
+
+const invoiceSchema = z.object({
+  supplier: z.string().min(1, "Nama nelayab wajib diisi"),
+  items: z.array(z.object({
+    product: z.object({
+      name: z.string(),
+      price: z.number()
+    }),
+    quantity: z.number().min(0.1, "Berat minimal 0.1 KG / 1 ONS"),
+    price: z.number().min(1000, "Harga minimal Rp1000")
+  })).min(1, "Minimal 1 item")
+})
+
+const errors = ref<{ supplier?: string; items: string[] }>({})
+
 const { data: products } = await useFetch("/api/products")
 const { data: invoices } = await useFetch("/api/invoices")
 
@@ -32,10 +48,24 @@ function removeItem(items, index) {
 }
 
 function onFormSubmit() {
+  const result = invoiceSchema.safeParse(form)
+
+  if (!result.success) {
+    const fieldErrors = result.error.flatten()
+    errors.value = {
+      supplier: fieldErrors.fieldErrors.supplier?.[0],
+      items: fieldErrors.fieldErrors.items?.map(e => e as string)
+    }
+    console.warn("Form tidak valid", fieldErrors)
+    return
+  }
+
   $fetch("/api/invoices", {
     method: "POST",
     body: form
   })
+
+  navigateTo("/invoices")
 }
 
 const handleScroll = () => {
@@ -69,10 +99,11 @@ onUnmounted(() => {
 
 <template>
   <div>
-    <form @submit="onFormSubmit()" class="flex flex-col pb-6 gap-4 w-full md:w-56">
+    <form @submit.prevent="onFormSubmit()" class="flex flex-col pb-6 gap-4 w-full md:w-56">
       <div class="flex flex-col gap-2">
         <label class="text-sm" for="supplier">Nama Nelayan</label>
         <InputText v-model="form.supplier" id="supplier" type="text" placeholder="Nama Nelayan" />
+        <small class="text-red-600">{{ errors.supplier }}</small>
       </div>
       <div v-for="(item, index) in form.items" :key="index" class="p-4 border border-gray-300 rounded-md space-y-4">
         <div class="w-full flex justify-between items-center">
@@ -93,7 +124,7 @@ onUnmounted(() => {
           <InputNumber v-model="item.quantity" id="quantity" fluid />
         </div>
         <div class="flex flex-col gap-2">
-          <label class="text-sm" for="pricr">Harga / KG</label>
+          <label class="text-sm" for="price">Harga / KG</label>
           <InputNumber v-model="item.price" id="price" mode="currency" currency="IDR" locale="id-ID"
             :minFractionDigits="0" :useGrouping="false" :min="1000" fluid />
         </div>
@@ -102,6 +133,9 @@ onUnmounted(() => {
           <InputText :value="(item.price ?? 0) * item.quantity" disabled id="subtotal" type="text"
             placeholder="Subtotal" />
         </div>
+        <small v-if="errors.items?.[index]" class="text-red-600">
+          {{ errors.items[index] }}
+        </small>
       </div>
       <Button @click="addItems" type="button" severity="secondary" variant="outlined" size="small" label="Add items" />
       <div
