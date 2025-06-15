@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { formatDate } from "~/utils/dateUtils"
+
 const { data: invoices } = useFetch("/api/invoices")
 
 const formatCurrency = (val: number) => {
@@ -29,6 +31,11 @@ const calculateTotal = (items) => {
       <Column header="Total Harga">
         <template #body="slotProps">
           {{ formatCurrency(calculateTotal(slotProps.data.items)) }}
+        </template>
+      </Column>
+      <Column header="CreateAt">
+        <template #body="slotProps">
+          {{ formatDate(slotProps.data.createAt) }}
         </template>
       </Column>
     </DataTable>

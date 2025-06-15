@@ -6,7 +6,7 @@ export const InvoiceController = {
   async getAllInvoices() {
     return Invoice.findAll()
   },
-  async createInvoice(data: Omit<InvoiceInterface, "id">) {
-    return Invoice.create({ id: String(invoices.length + 1), ...data })
+  async createInvoice(data: Omit<InvoiceInterface, "id" | "createAt">) {
+    return Invoice.create({ id: String(invoices.length + 1), ...data, createAt: new Date() })
   }
 }

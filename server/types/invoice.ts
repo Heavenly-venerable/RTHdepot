@@ -5,5 +5,5 @@ export interface InvoiceInterface {
   supplier: string,
   items: { product: ProductInterface, quantity: number, price: number }[],
   total: number,
-  createAt: string,
+  createAt: Date,
 }
