@@ -8,6 +8,9 @@ export const InvoiceController = {
   async getAllInvoices() {
     return Invoice.findAll()
   },
+  async getInvoiceById(id: string) {
+    return Invoice.findById(id)
+  },
   async createInvoice(data: Omit<InvoiceInterface, "id" | "createAt" | "total">) {
     const parsed = CreateInvoiceSchema.safeParse(data)
 

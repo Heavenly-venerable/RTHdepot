@@ -1,5 +1,5 @@
-import { invoices } from "~/server/data/invoices"
+import { InvoiceController } from "../../controller/invoiceController"
 
 export default defineEventHandler(async (event) => {
-  return invoices
+  return await InvoiceController.getAllInvoices()
 })
