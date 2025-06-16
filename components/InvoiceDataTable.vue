@@ -38,6 +38,9 @@ const calculateTotal = (items) => {
           {{ formatDate(slotProps.data.createAt) }}
         </template>
       </Column>
+      <template #empty>
+        <p class="text-lg text-center py-4">Tidak ada data yang ditemukan</p>
+      </template>
     </DataTable>
   </div>
 </template>
