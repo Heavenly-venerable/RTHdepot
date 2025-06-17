@@ -38,6 +38,15 @@ const calculateTotal = (items) => {
           {{ formatDate(slotProps.data.createAt) }}
         </template>
       </Column>
+      <Column>
+        <template #body="slotProps">
+          <div class="flex justify-center items-center gap-x-4">
+            <NuxtLink :to="{ path: `/invoices/${slotProps.data.id}` }">
+              <Button rounded icon="pi pi-eye" />
+            </NuxtLink>
+          </div>
+        </template>
+      </Column>
       <template #empty>
         <p class="text-lg text-center py-4">Tidak ada data yang ditemukan</p>
       </template>
