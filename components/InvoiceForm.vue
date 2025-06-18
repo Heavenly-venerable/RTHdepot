@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { z } from "zod"
+import { formatPrice } from "~/utils/priceUtils"
 
 const invoiceSchema = z.object({
   supplier: z.string().min(1, "Nama nelayab wajib diisi"),
@@ -146,7 +147,7 @@ onUnmounted(() => {
         }">
         <div class="flex justify-between p-2">
           <p>Total Pembayaran:</p>
-          <p class="text-2xl font-bold">Rp {{ totalItemsPrices }}</p>
+          <p class="text-2xl font-bold">{{ formatPrice(totalItemsPrices) }}</p>
         </div>
         <Button fluid type="submit" severity="primary" label="Submit" />
       </div>

@@ -1,11 +1,8 @@
 <script setup lang="ts">
 import { formatDate } from "~/utils/dateUtils"
+import { formatPrice } from "~/utils/priceUtils"
 
 const { data: invoices } = useFetch("/api/invoices")
-
-const formatCurrency = (val: number) => {
-  return val.toLocaleString("id-ID", { style: "currency", currency: "IDR" })
-}
 
 const calculateTotal = (items) => {
   return items.reduce((total, item) => item.quantity * item.price + total, 0)
@@ -30,7 +27,7 @@ const calculateTotal = (items) => {
       </Column>
       <Column header="Total Harga">
         <template #body="slotProps">
-          {{ formatCurrency(calculateTotal(slotProps.data.items)) }}
+          {{ formatPrice(calculateTotal(slotProps.data.items)) }}
         </template>
       </Column>
       <Column header="CreateAt">

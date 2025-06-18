@@ -1,13 +1,10 @@
 <script setup lang="ts">
 import { formatDate } from "~/utils/dateUtils"
+import { formatPrice } from "~/utils/priceUtils"
 
 const route = useRoute()
 
 const { data: invoice, pending, error } = useFetch(`/api/invoices/${route.params.id}`)
-
-function formatPrice(value: number) {
-  return value.toLocaleString('id-ID')
-}
 </script>
 
 <template>
@@ -35,17 +32,17 @@ function formatPrice(value: number) {
                 <div>
                   <div class="font-medium">{{ item.product.name }}</div>
                   <div class="text-gray-500 text-xs">
-                    {{ item.quantity }} x Rp{{ formatPrice(item.price) }}
+                    {{ item.quantity }} KG x {{ formatPrice(item.price) }}
                   </div>
                 </div>
                 <div class="font-semibold text-gray-700">
-                  Rp{{ formatPrice(item.quantity * item.price) }}
+                  {{ formatPrice(item.quantity * item.price) }}
                 </div>
               </div>
             </div>
           </div>
           <div class="border-t pt-4 text-right text-gray-800 font-bold text-lg">
-            Total: Rp{{ formatPrice(invoice?.total) }}
+            Total: {{ formatPrice(invoice?.total) }}
           </div>
         </div>
       </template>
