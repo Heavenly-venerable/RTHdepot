@@ -5,9 +5,9 @@ export const InvoiceItemSchema = z.object({
     id: z.string(),
     name: z.string(),
     price: z.number().nonnegative(),
-    stock: z.number().int().nonnegative()
+    stock: z.number().nonnegative()
   }),
-  quantity: z.number().int().positive(),
+  quantity: z.number().positive(),
   price: z.number().nonnegative(),
 })
 
