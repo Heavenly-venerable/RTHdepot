@@ -4,8 +4,16 @@ import { formatPrice } from "~/utils/priceUtils"
 
 const { data: invoices } = useFetch("/api/invoices")
 
+const editForm = ref(null)
+const visible = ref(false)
+
 const calculateTotal = (items) => {
   return items.reduce((total, item) => item.quantity * item.price + total, 0)
+}
+
+const onEdit = (data: any) => {
+  editForm.value = data
+  visible.value = true
 }
 </script>
 
@@ -39,8 +47,9 @@ const calculateTotal = (items) => {
         <template #body="slotProps">
           <div class="flex justify-center items-center gap-x-4">
             <NuxtLink :to="{ path: `/invoices/${slotProps.data.id}` }">
-              <Button rounded icon="pi pi-eye" />
+              <Button rounded severity="info" icon="pi pi-eye" />
             </NuxtLink>
+            <Button @click="onEdit(slotProps.data)" severity="warn" rounded icon="pi pi-pencil" />
           </div>
         </template>
       </Column>
@@ -48,6 +57,9 @@ const calculateTotal = (items) => {
         <p class="text-lg text-center py-4">Tidak ada data yang ditemukan</p>
       </template>
     </DataTable>
+    <Dialog v-model:visible="visible" modal header="Edit Invoice" class="w-80">
+      <InvoiceEdit :invoice="editForm" />
+    </Dialog>
   </div>
 </template>
 
