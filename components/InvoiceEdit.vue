@@ -1,7 +1,12 @@
 <script setup lang="ts">
 const props = defineProps<{
-  invoice: any | null
+  invoice: any | null,
+  visible: boolean
 }>()
+
+const emit = defineEmits(["update:visible"])
+
+const route = useRoute()
 
 const { data: products } = await useFetch("/api/products")
 
@@ -24,8 +29,15 @@ function removeItem(items, index) {
   items.splice(index, 1)
 }
 
-function onFormSubmit() {
+async function onFormSubmit() {
+  const id = props.invoice?.id || route.params.id
 
+  await $fetch(`/api/invoices/${id}`, {
+    method: 'PATCH',
+    body: editForm
+  })
+
+  emit("update:visible", !props.visible)
 }
 
 watch(() => editForm.items.map(item => item.product), (newProducts, oldProducts) => {
@@ -37,8 +49,13 @@ watch(() => editForm.items.map(item => item.product), (newProducts, oldProducts)
 }, { deep: true })
 
 onMounted(() => {
-  editForm.supplier = props.invoice.supplier
-  editForm.items = props.invoice.items
+  editForm.supplier = props.invoice?.supplier ?? ""
+
+  editForm.items = props.invoice?.items?.map(item => ({
+    product: productsData.value.find(p => p.id === item.product.id),
+    quantity: item.quantity,
+    price: item.price
+  })) ?? [{ product: null, quantity: 1, price: 0 }]
 })
 </script>
 

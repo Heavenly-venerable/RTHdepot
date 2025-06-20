@@ -58,7 +58,7 @@ const onEdit = (data: any) => {
       </template>
     </DataTable>
     <Dialog v-model:visible="visible" modal header="Edit Invoice" class="w-80">
-      <InvoiceEdit :invoice="editForm" />
+      <InvoiceEdit v-model:visible="visible" :invoice="editForm" />
     </Dialog>
   </div>
 </template>
