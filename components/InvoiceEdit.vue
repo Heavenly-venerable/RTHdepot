@@ -19,6 +19,12 @@ const editForm = reactive({
   ]
 })
 
+const totalItemsPrices = computed(() => editForm.items.reduce((total, item) => {
+  const price = item.price || 0
+  const quantity = item.quantity || 0
+  return total + price * quantity
+}, 0))
+
 function addItems() {
   editForm.items.push({ product: "", quantity: 1, price: 0 })
 }
@@ -86,15 +92,19 @@ onMounted(() => {
       <div class="flex flex-col gap-2">
         <label class="text-sm" for="price">Harga / KG</label>
         <InputNumber v-model="item.price" id="price" mode="currency" currency="IDR" locale="id-ID"
-          :minFractionDigits="0" :useGrouping="false" :min="1000" fluid />
+          :minFractionDigits="0" :useGrouping="true" :min="1000" fluid />
       </div>
       <div class="flex flex-col gap-2">
         <label class="text-sm" for="subtotal">Subtotal</label>
-        <InputText :value="(item.price ?? 0) * item.quantity" disabled id="subtotal" type="text"
+        <InputText :value="formatPrice((item.price ?? 0) * item.quantity)" disabled id="subtotal" type="text"
           placeholder="Subtotal" />
       </div>
     </div>
     <Button @click="addItems" type="button" severity="secondary" variant="outlined" size="small" label="Add items" />
+    <div class="flex items-center justify-between p-2">
+      <p>Total Pembayaran:</p>
+      <p class="text-2xl font-bold">{{ formatPrice(totalItemsPrices) }}</p>
+    </div>
     <Button fluid type="submit" severity="primary" label="Submit" />
   </form>
 </template>

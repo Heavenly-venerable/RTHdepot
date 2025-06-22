@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { z } from "zod"
-import { formatPrice } from "~/utils/priceUtils"
 
 const invoiceSchema = z.object({
   supplier: z.string().min(1, "Nama nelayab wajib diisi"),
@@ -127,11 +126,11 @@ onUnmounted(() => {
         <div class="flex flex-col gap-2">
           <label class="text-sm" for="price">Harga / KG</label>
           <InputNumber v-model="item.price" id="price" mode="currency" currency="IDR" locale="id-ID"
-            :minFractionDigits="0" :useGrouping="false" :min="1000" fluid />
+            :minFractionDigits="0" :useGrouping="true" :min="1000" fluid />
         </div>
         <div class="flex flex-col gap-2">
           <label class="text-sm" for="subtotal">Subtotal</label>
-          <InputText :value="(item.price ?? 0) * item.quantity" disabled id="subtotal" type="text"
+          <InputText :value="formatPrice((item.price ?? 0) * item.quantity)" disabled id="subtotal" type="text"
             placeholder="Subtotal" />
         </div>
         <small v-if="errors.items?.[index]" class="text-red-600">
@@ -145,7 +144,7 @@ onUnmounted(() => {
           'translate-y-0': isVisible,
           'translate-y-full': !isVisible
         }">
-        <div class="flex justify-between p-2">
+        <div class="flex items-center justify-between p-2">
           <p>Total Pembayaran:</p>
           <p class="text-2xl font-bold">{{ formatPrice(totalItemsPrices) }}</p>
         </div>
