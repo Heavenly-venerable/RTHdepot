@@ -16,7 +16,10 @@ export const Invoice = {
 
     if (index === -1) return null
 
-    invoices[index] = updateData
+    invoices[index] = {
+      ...invoices[index],
+      ...updateData
+    }
 
     return invoices[index]
   }
