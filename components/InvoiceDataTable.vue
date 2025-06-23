@@ -45,11 +45,12 @@ const onEdit = (data: any) => {
       </Column>
       <Column>
         <template #body="slotProps">
-          <div class="flex justify-center items-center gap-x-4">
+          <div class="flex justify-center items-center gap-x-2">
             <NuxtLink :to="{ path: `/invoices/${slotProps.data.id}` }">
               <Button rounded severity="info" icon="pi pi-eye" />
             </NuxtLink>
             <Button @click="onEdit(slotProps.data)" severity="warn" rounded icon="pi pi-pencil" />
+            <ConfirmDialogDelete />
           </div>
         </template>
       </Column>
