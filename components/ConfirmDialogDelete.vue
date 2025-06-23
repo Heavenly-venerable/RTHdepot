@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const props = defineProps<{ id: string }>()
+
 const confirm = useConfirm()
 const toast = useToast()
 
@@ -17,8 +19,16 @@ const confirmDeleteInvoice = () => {
       label: 'Hapus',
       severity: 'danger'
     },
-    accept: () => {
-      toast.add({ severity: 'info', summary: 'Dihapus', detail: 'Invoice berhasil dihapus', life: 3000 });
+    accept: async () => {
+      try {
+        await $fetch(`/api/invoices/${props.id}`, {
+          method: "DELETE"
+        })
+        toast.add({ severity: 'info', summary: 'Dihapus', detail: 'Invoice berhasil dihapus', life: 3000 });
+      } catch (error) {
+        console.error(error)
+        toast.add({ severity: 'error', summary: 'Gagal menghapus invoice', life: 3000 });
+      }
     },
     reject: () => {
       toast.add({ severity: 'warn', summary: 'Dibatalkan', detail: 'Penghapusan invoice dibatalkan', life: 3000 });
@@ -29,8 +39,6 @@ const confirmDeleteInvoice = () => {
 
 <template>
   <div>
-    <Toast class="w-80" />
-    <ConfirmDialog class="w-80"></ConfirmDialog>
     <Button @click="confirmDeleteInvoice()" severity="danger" rounded icon="pi pi-trash" />
   </div>
 </template>

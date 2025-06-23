@@ -50,7 +50,7 @@ const onEdit = (data: any) => {
               <Button rounded severity="info" icon="pi pi-eye" />
             </NuxtLink>
             <Button @click="onEdit(slotProps.data)" severity="warn" rounded icon="pi pi-pencil" />
-            <ConfirmDialogDelete />
+            <ConfirmDialogDelete :id="slotProps.data.id" />
           </div>
         </template>
       </Column>

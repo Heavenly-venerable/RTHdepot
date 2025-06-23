@@ -22,5 +22,12 @@ export const Invoice = {
     }
 
     return invoices[index]
+  },
+  delete(id: string) {
+    const index = invoices.findIndex(i => i.id === id)
+    if (index === -1) return false
+
+    invoices.splice(index, 1)
+    return true
   }
 }

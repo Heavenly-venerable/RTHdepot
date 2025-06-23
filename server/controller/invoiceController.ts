@@ -9,6 +9,13 @@ export const InvoiceController = {
     return Invoice.findAll()
   },
   async getInvoiceById(id: string) {
+    const existing = Invoice.findById(id)
+    if (!existing) {
+      return {
+        success: false,
+        message: `Invoice dengan ID: ${id} tidak ditemukan`
+      }
+    }
     return Invoice.findById(id)
   },
   async createInvoice(data: Omit<InvoiceInterface, "id" | "createAt" | "total">) {
@@ -108,6 +115,35 @@ export const InvoiceController = {
     return {
       success: true,
       message: `Invoice dengan ID: ${id} berhasil diperbarui`
+    }
+  },
+  async deleteInvoice(id: string) {
+    const existing = Invoice.findById(id)
+    if (!existing) {
+      return {
+        success: false,
+        message: `Invoice dengan ID: ${id} tidak ditemukan`
+      }
+    }
+
+    for (const item of existing.items) {
+      const product = products.find(p => p.id === item.product.id)
+      if (product) {
+        product.stock -= item.quantity
+      }
+    }
+
+    const deleted = Invoice.delete(id)
+    if (!deleted) {
+      return {
+        success: false,
+        message: `Gagal menghapus invoice dengan ID: ${id}`
+      }
+    }
+
+    return {
+      success: true,
+      message: `Invoice dengan ID: ${id} berhasil dihapus`
     }
   }
 }
