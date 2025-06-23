@@ -3,8 +3,8 @@
 
 <template>
   <div class="w-full min-h-screen p-4">
-    <Toast class="w-80" />
-    <ConfirmDialog class="w-80"></ConfirmDialog>
+    <Toast class="max-w-80" />
+    <ConfirmDialog class="max-w-80"></ConfirmDialog>
     <NuxtPage />
   </div>
 </template>
