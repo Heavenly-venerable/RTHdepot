@@ -8,7 +8,7 @@ const productsData = computed(() => products.value?.data ?? [])
   <div class="space-y-4">
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-xl font-semibold">Daftar Product</h2>
-      <NuxtLink to="#">
+      <NuxtLink to="/products/create">
         <Button label="New Product" icon="pi pi-plus" />
       </NuxtLink>
     </div>
