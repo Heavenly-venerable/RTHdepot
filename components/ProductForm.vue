@@ -7,7 +7,11 @@ const productSchema = z.object({
   stock: z.number().nonnegative()
 })
 
-const errors = ref<{ name?: string; price?: string; stock?: string }>()
+const errors = ref<{ name?: string; price?: string; stock?: string }>({
+  name: undefined,
+  price: undefined,
+  stock: undefined
+})
 
 const form = reactive({
   name: "",
@@ -42,8 +46,9 @@ function onFormSubmit() {
   }
 }
 
-watch(form, (newForm) => {
-
+watch(() => form.name, (value) => {
+  const result = productSchema.shape.name.safeParse(value)
+  errors.value.name = result.success ? undefined : result.error.flatten().formErrors[0]
 });
 </script>
 
