@@ -11,4 +11,16 @@ export const Product = {
   create(data: ProductInterface) {
     products.push(data)
   },
+  update(id: string, updateData: Partial<Omit<ProductInterface, "id">>) {
+    const index = products.findIndex(p => p.id === id)
+
+    if (index === -1) return null
+
+    products[index] = {
+      ...products[index],
+      ...updateData
+    }
+
+    return products[index]
+  }
 }
