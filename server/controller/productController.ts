@@ -70,5 +70,27 @@ export const ProductController = {
       success: true,
       message: `Product dengan ID: ${id} berhasil diperbarui`
     }
+  },
+  async deleteProduct(id: string) {
+    const existing = Product.findById(id)
+    if (!existing) {
+      return {
+        success: false,
+        message: `Produk dengan ID: ${id} tidak ditemukan`
+      }
+    }
+
+    const deleted = Product.delete(id)
+    if (!deleted) {
+      return {
+        success: false,
+        message: `Gagal menghapus product dengan ID: ${id}`
+      }
+    }
+
+    return {
+      success: true,
+      message: `Product dengan ID: ${id} berhasil dihapus`
+    }
   }
 }
