@@ -5,13 +5,18 @@ import { ProductInterface } from "../types/product";
 
 export const ProductController = {
   async getAllProducts() {
-    const products = Product.findAll()
-
-    if (!products) {
-      console.log("Product not found")
+    return Product.findAll()
+  },
+  async getProductById(id: string) {
+    const existing = Product.findById(id)
+    if (!existing) {
+      return {
+        success: false,
+        message: `Produk dengan ID: ${id} tidak ditemukan`
+      }
     }
 
-    return products
+    return existing
   },
   async createInvoice(data: Omit<ProductInterface, "id">) {
     const parsed = ProductSchema.omit({ id: true }).safeParse(data)
