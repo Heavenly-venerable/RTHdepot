@@ -5,6 +5,9 @@ export const Product = {
   findAll() {
     return products
   },
+  findById(id: string) {
+    return products.find(p => p.id === id)
+  },
   create(data: ProductInterface) {
     products.push(data)
   },
