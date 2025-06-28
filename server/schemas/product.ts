@@ -7,4 +7,5 @@ export const ProductSchema = z.object({
   stock: z.number().nonnegative()
 })
 
+export const EditProductSchema = ProductSchema.partial()
 

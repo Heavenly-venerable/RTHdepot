@@ -1,6 +1,6 @@
 import { products } from "../data/products";
 import { Product } from "../models/product.model";
-import { ProductSchema } from "../schemas/product";
+import { EditProductSchema, ProductSchema } from "../schemas/product";
 import { ProductInterface } from "../types/product";
 
 export const ProductController = {
@@ -18,7 +18,7 @@ export const ProductController = {
 
     return existing
   },
-  async createInvoice(data: Omit<ProductInterface, "id">) {
+  async createProduct(data: Omit<ProductInterface, "id">) {
     const parsed = ProductSchema.omit({ id: true }).safeParse(data)
 
     if (!parsed.success) {
@@ -41,4 +41,34 @@ export const ProductController = {
       message: "Product berhasil ditambahkan",
     }
   },
+  async updateProduct(id: string, data: Partial<Omit<ProductInterface, "id">>) {
+    const existing = Product.findById(id)
+    if (!existing) {
+      return {
+        success: false,
+        message: `Produk dengan ID: ${id} tidak ditemukan`
+      }
+    }
+
+    const parsed = EditProductSchema.safeParse(data)
+    if (!parsed.success) {
+      return {
+        success: false,
+        message: "Data tidak valid",
+        errors: parsed.error.flatten()
+      }
+    }
+
+    const updatedProduct = {
+      ...existing,
+      ...parsed.data
+    }
+
+    Product.update(id, updatedProduct)
+
+    return {
+      success: true,
+      message: `Product dengan ID: ${id} berhasil diperbarui`
+    }
+  }
 }
