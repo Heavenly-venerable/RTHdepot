@@ -22,5 +22,14 @@ export const Product = {
     }
 
     return products[index]
+  },
+  delete(id: string) {
+    const index = products.findIndex(p => p.id === id)
+
+    if (index === -1) return null
+
+    products.splice(index, 1)
+
+    return true
   }
 }

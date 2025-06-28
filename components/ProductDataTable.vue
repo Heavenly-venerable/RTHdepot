@@ -33,6 +33,7 @@ const onEdit = (data: any) => {
         <template #body="slotProps">
           <div class="flex justify-center items-center gap-x-2">
             <Button @click="onEdit(slotProps.data)" severity="warn" rounded icon="pi pi-pencil" />
+            <ConfirmDialogDeleteProduct :id="slotProps.data.id" />
           </div>
         </template>
       </Column>
