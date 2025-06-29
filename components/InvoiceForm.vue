@@ -139,7 +139,7 @@ onUnmounted(() => {
       </div>
       <Button @click="addItems" type="button" severity="secondary" variant="outlined" size="small" label="Add items" />
       <div
-        class="fixed bottom-0 left-0 z-50 w-full p-4 bg-gray-50 border-t rounded-ss-3xl rounded-se-3xl transition-transform duration-500 dark:bg-black dark:border-none"
+        class="fixed bottom-0 left-0 z-50 w-full p-4 bg-gray-50 border-t rounded-ss-3xl rounded-se-3xl transition-transform duration-500 dark:bg-zinc-900 dark:border-none"
         :class="{
           'translate-y-0': isVisible,
           'translate-y-full': !isVisible
