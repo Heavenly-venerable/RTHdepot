@@ -2,11 +2,9 @@
 </script>
 
 <template>
-  <div class="w-full min-h-screen p-4">
-    <Toast class="max-w-80" />
-    <ConfirmDialog class="max-w-80"></ConfirmDialog>
+  <NuxtLayout>
     <NuxtPage />
-  </div>
+  </NuxtLayout>
 </template>
 
 <style>
