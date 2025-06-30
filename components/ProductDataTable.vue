@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { data: products } = useFetch("/api/products")
+const { data: products, refresh } = useFetch("/api/products")
 
 const productsData = computed(() => products.value?.data ?? [])
 
@@ -10,6 +10,15 @@ const onEdit = (data: any) => {
   editForm.value = data
   visible.value = true
 }
+
+onMounted(() => {
+  const interval = setInterval(() => {
+    refresh()
+  }, 5000)
+  onBeforeUnmount(() => {
+    clearInterval(interval)
+  })
+})
 </script>
 
 <template>

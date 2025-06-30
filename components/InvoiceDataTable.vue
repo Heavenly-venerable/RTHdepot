@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import { formatDate } from "~/utils/dateUtils"
-import { formatPrice } from "~/utils/priceUtils"
-
-const { data: invoices } = useFetch("/api/invoices")
+const { data: invoices, refresh } = useFetch("/api/invoices")
 
 const editForm = ref(null)
 const visible = ref(false)
@@ -15,6 +12,15 @@ const onEdit = (data: any) => {
   editForm.value = data
   visible.value = true
 }
+
+onMounted(() => {
+  const interval = setInterval(() => {
+    refresh()
+  }, 5000)
+  onBeforeUnmount(() => {
+    clearInterval(interval)
+  })
+})
 </script>
 
 <template>
