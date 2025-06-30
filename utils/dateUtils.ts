@@ -20,3 +20,12 @@ export function formatDate(dateInput: string | Date, withTime = false): string {
   return `${formattedDate} ${hours}:${minutes}`
 }
 
+export function isToday(dateInput: Date): boolean {
+  dateInput = new Date(dateInput)
+  const today = new Date()
+  return (
+    dateInput.getDate() === today.getDate() &&
+    dateInput.getMonth() === today.getMonth() &&
+    dateInput.getFullYear() === today.getFullYear()
+  )
+}
