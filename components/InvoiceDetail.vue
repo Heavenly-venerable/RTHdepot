@@ -1,10 +1,5 @@
 <script setup lang="ts">
-import { formatDate } from "~/utils/dateUtils"
-import { formatPrice } from "~/utils/priceUtils"
-
-const route = useRoute()
-
-const { data: invoice, pending, error } = useFetch(`/api/invoices/${route.params.id}`)
+const { invoice } = useInvoice()
 </script>
 
 <template>

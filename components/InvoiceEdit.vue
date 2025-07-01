@@ -6,9 +6,8 @@ const props = defineProps<{
 
 const emit = defineEmits(["update:visible"])
 
-const route = useRoute()
-
 const { data: products } = await useFetch("/api/products")
+const { updateInvoice } = useInvoice(props.invoice?.id)
 
 const productsData = computed(() => products.value?.data ?? [])
 
@@ -36,12 +35,7 @@ function removeItem(items, index) {
 }
 
 async function onFormSubmit() {
-  const id = props.invoice?.id || route.params.id
-
-  await $fetch(`/api/invoices/${id}`, {
-    method: 'PATCH',
-    body: editForm
-  })
+  updateInvoice(editForm)
 
   emit("update:visible", !props.visible)
 }

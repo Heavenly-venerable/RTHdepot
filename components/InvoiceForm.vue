@@ -16,7 +16,7 @@ const invoiceSchema = z.object({
 const errors = ref<{ supplier?: string; items: string[] }>({})
 
 const { data: products } = await useFetch("/api/products")
-const { data: invoices } = await useFetch("/api/invoices")
+const { invoices, createInvoice } = useInvoices()
 
 const productsData = computed(() => products.value?.data ?? [])
 
@@ -60,10 +60,7 @@ function onFormSubmit() {
     return
   }
 
-  $fetch("/api/invoices", {
-    method: "POST",
-    body: form
-  })
+  createInvoice(form)
 
   navigateTo("/invoices")
 }
