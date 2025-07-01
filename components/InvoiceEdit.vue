@@ -4,6 +4,8 @@ const props = defineProps<{
   visible: boolean
 }>()
 
+const toast = useToast()
+
 const emit = defineEmits(["update:visible"])
 
 const { data: products } = await useFetch("/api/products")
@@ -36,7 +38,7 @@ function removeItem(items, index) {
 
 async function onFormSubmit() {
   updateInvoice(editForm)
-
+  toast.add({ severity: 'info', summary: 'Diedit', detail: 'Invoice berhasil diedit', life: 3000 });
   emit("update:visible", !props.visible)
 }
 

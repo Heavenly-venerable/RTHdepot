@@ -23,7 +23,7 @@ const confirmDeleteInvoice = () => {
     accept: async () => {
       try {
         deleteInvoice(props.id)
-        toast.add({ severity: 'info', summary: 'Dihapus', detail: 'Invoice berhasil dihapus', life: 3000 });
+        toast.add({ severity: 'warn', summary: 'Dihapus', detail: 'Invoice berhasil dihapus', life: 3000 });
       } catch (error) {
         console.error(error)
         toast.add({ severity: 'error', summary: 'Gagal menghapus invoice', life: 3000 });

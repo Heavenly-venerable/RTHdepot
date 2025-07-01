@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { z } from "zod"
 
+const toast = useToast()
+
 const invoiceSchema = z.object({
   supplier: z.string().min(1, "Nama nelayab wajib diisi"),
   items: z.array(z.object({
@@ -61,6 +63,8 @@ function onFormSubmit() {
   }
 
   createInvoice(form)
+
+  toast.add({ severity: 'success', summary: 'Ditambah', detail: 'Invoice berhasil ditambahkan', life: 3000 });
 
   navigateTo("/invoices")
 }
