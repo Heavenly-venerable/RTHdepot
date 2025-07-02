@@ -48,18 +48,24 @@ watch(() => editForm.items.map(item => item.product), (newProducts, oldProducts)
   })
 }, { deep: true })
 
-onMounted(() => {
-  editForm.supplier = props.invoice?.supplier ?? ""
+watch(() => products.value, (newProducts) => {
+  if (!props.invoice) return
 
-  editForm.items = props.invoice?.items?.map(item => ({
-    product: products.value.find(p => p.id === item.product.id),
+  editForm.supplier = props.invoice.supplier ?? ""
+
+  editForm.items = props.invoice.items?.map(item => ({
+    product: newProducts.find(p => p.id === item.product.id) ?? null,
     quantity: item.quantity,
     price: item.price
   })) ?? [{ product: null, quantity: 1, price: 0 }]
-})
+},
+  { immediate: true }
+)
 </script>
 
 <template>
+  supplier: {{ editForm }}
+  products: {{ products }}
   <form @submit.prevent="onFormSubmit()" class="w-full flex flex-col gap-4">
     <div class="flex flex-col gap-2">
       <label class="text-sm" for="supplier">Nama Nelayan</label>
