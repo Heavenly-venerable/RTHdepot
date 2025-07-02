@@ -13,6 +13,9 @@ const errors = ref<{ name?: string; price?: string; stock?: string }>({
   stock: undefined
 })
 
+const { createProduct } = useProducts()
+const toast = useToast()
+
 const form = reactive({
   name: "",
   price: 1000,
@@ -37,11 +40,8 @@ function validateForm() {
 
 function onFormSubmit() {
   if (validateForm()) {
-    $fetch("/api/products", {
-      method: "POST",
-      body: form
-    })
-
+    createProduct(form)
+    toast.add({ severity: 'success', summary: 'Ditambah', detail: 'Product berhasil ditambahkan', life: 3000 });
     navigateTo("/products")
   }
 }

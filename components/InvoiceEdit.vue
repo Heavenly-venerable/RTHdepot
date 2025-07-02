@@ -8,10 +8,8 @@ const toast = useToast()
 
 const emit = defineEmits(["update:visible"])
 
-const { data: products } = await useFetch("/api/products")
+const { products } = useProducts()
 const { updateInvoice } = useInvoice(props.invoice?.id)
-
-const productsData = computed(() => products.value?.data ?? [])
 
 const editForm = reactive({
   supplier: "",
@@ -54,7 +52,7 @@ onMounted(() => {
   editForm.supplier = props.invoice?.supplier ?? ""
 
   editForm.items = props.invoice?.items?.map(item => ({
-    product: productsData.value.find(p => p.id === item.product.id),
+    product: products.value.find(p => p.id === item.product.id),
     quantity: item.quantity,
     price: item.price
   })) ?? [{ product: null, quantity: 1, price: 0 }]
@@ -78,7 +76,7 @@ onMounted(() => {
       </div>
       <div class="flex flex-col gap-2">
         <label class="text-sm" for="product">Jenis Ikan</label>
-        <Select v-model="item.product" :options="productsData" optionLabel="name" id="product"
+        <Select v-model="item.product" :options="products" optionLabel="name" id="product"
           placeholder="Pilih Jenis Ikan" checkmark filter showClear :highlightOnSelect="false" fluid />
       </div>
       <div class="flex flex-col gap-2">

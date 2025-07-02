@@ -1,7 +1,5 @@
 <script setup lang="ts">
-const { data: products, refresh } = useFetch("/api/products")
-
-const productsData = computed(() => products.value?.data ?? [])
+const { products } = useProducts()
 
 const editForm = ref(null)
 const visible = ref(false)
@@ -10,15 +8,6 @@ const onEdit = (data: any) => {
   editForm.value = data
   visible.value = true
 }
-
-onMounted(() => {
-  const interval = setInterval(() => {
-    refresh()
-  }, 5000)
-  onBeforeUnmount(() => {
-    clearInterval(interval)
-  })
-})
 </script>
 
 <template>
@@ -29,7 +18,7 @@ onMounted(() => {
         <Button label="New Product" icon="pi pi-plus" />
       </NuxtLink>
     </div>
-    <DataTable :value="productsData" showGridlines scrollable tableStyle="min-width: 50rem">
+    <DataTable :value="products" showGridlines scrollable tableStyle="min-width: 50rem">
       <Column field="id" header="ID"></Column>
       <Column field="name" header="Name"></Column>
       <Column header="Total Harga">

@@ -17,10 +17,8 @@ const invoiceSchema = z.object({
 
 const errors = ref<{ supplier?: string; items: string[] }>({})
 
-const { data: products } = await useFetch("/api/products")
+const { products } = useProducts()
 const { invoices, createInvoice } = useInvoices()
-
-const productsData = computed(() => products.value?.data ?? [])
 
 const isVisible = ref(true)
 
@@ -117,7 +115,7 @@ onUnmounted(() => {
         </div>
         <div class="flex flex-col gap-2">
           <label class="text-sm" for="product">Jenis Ikan</label>
-          <Select v-model="item.product" :options="productsData" optionLabel="name" id="product"
+          <Select v-model="item.product" :options="products" optionLabel="name" id="product"
             placeholder="Pilih Jenis Ikan" checkmark filter showClear :highlightOnSelect="false" fluid />
         </div>
         <div class="flex flex-col gap-2">

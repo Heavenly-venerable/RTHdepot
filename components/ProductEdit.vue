@@ -4,9 +4,10 @@ const props = defineProps<{
   visible: boolean
 }>()
 
-const emit = defineEmits(["update:visible"])
+const { updateProduct } = useProduct(props.product?.id)
+const toast = useToast()
 
-const route = useRoute()
+const emit = defineEmits(["update:visible"])
 
 const form = reactive({
   name: "",
@@ -32,14 +33,8 @@ function validate() {
 
 async function onFormSubmit() {
   if (!validate()) return
-
-  const id = props.product?.id || route.params.id
-
-  await $fetch(`/api/products/${id}`, {
-    method: "PATCH",
-    body: form
-  })
-
+  updateProduct(form)
+  toast.add({ severity: 'info', summary: 'Diedit', detail: 'Product berhasil diedit', life: 3000 });
   emit("update:visible", !props.visible)
 }
 

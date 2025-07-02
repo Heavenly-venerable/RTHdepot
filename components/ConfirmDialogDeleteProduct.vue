@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const props = defineProps<{ id: string }>()
 
+const { deleteProduct } = useProducts()
 const confirm = useConfirm()
 const toast = useToast()
 
@@ -21,10 +22,8 @@ const confirmDeleteInvoice = () => {
     },
     accept: async () => {
       try {
-        await $fetch(`/api/products/${props.id}`, {
-          method: "DELETE"
-        })
-        toast.add({ severity: 'info', summary: 'Dihapus', detail: 'Product berhasil dihapus', life: 3000 });
+        deleteProduct(props.id)
+        toast.add({ severity: 'warn', summary: 'Dihapus', detail: 'Product berhasil dihapus', life: 3000 });
       } catch (error) {
         console.error(error)
         toast.add({ severity: 'error', summary: 'Gagal menghapus invoice', life: 3000 });
