@@ -64,8 +64,6 @@ watch(() => products.value, (newProducts) => {
 </script>
 
 <template>
-  supplier: {{ editForm }}
-  products: {{ products }}
   <form @submit.prevent="onFormSubmit()" class="w-full flex flex-col gap-4">
     <div class="flex flex-col gap-2">
       <label class="text-sm" for="supplier">Nama Nelayan</label>
