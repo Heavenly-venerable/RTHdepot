@@ -8,7 +8,8 @@ export const InvoiceItemSchema = z.object({
 })
 
 export const CreateInvoiceSchema = z.object({
-  supplier: z.string().min(1, "Supplier harus diisi"),
+  partner: z.string().min(1, "Nama harus diisi"),
+  type: z.enum(["sale", "purchase"]),
   items: z.array(InvoiceItemSchema).min(1, "Minimal ada 1 item"),
 })
 

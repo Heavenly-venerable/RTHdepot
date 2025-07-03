@@ -4,7 +4,8 @@ import { z } from "zod"
 const toast = useToast()
 
 const invoiceSchema = z.object({
-  supplier: z.string().min(1, "Nama nelayab wajib diisi"),
+  partner: z.string().min(1, "Nama wajib diisi"),
+  type: z.enum(["sale", "purchase"]),
   items: z.array(z.object({
     product: z.object({
       name: z.string(),
@@ -15,7 +16,7 @@ const invoiceSchema = z.object({
   })).min(1, "Minimal 1 item")
 })
 
-const errors = ref<{ supplier?: string; items: string[] }>({})
+const errors = ref<{ partner?: string; items: string[] }>({})
 
 const { products } = useProducts()
 const { invoices, createInvoice } = useInvoices()
@@ -25,7 +26,8 @@ const isVisible = ref(true)
 let lastScrollY = 0
 
 const form = reactive({
-  supplier: "",
+  partner: "",
+  type: "purchase",
   items: [
     { product: null, quantity: 1, price: 0 }
   ]
@@ -53,7 +55,7 @@ function onFormSubmit() {
   if (!result.success) {
     const fieldErrors = result.error.flatten()
     errors.value = {
-      supplier: fieldErrors.fieldErrors.supplier?.[0],
+      partner: fieldErrors.fieldErrors.supplier?.[0],
       items: fieldErrors.fieldErrors.items?.map(e => e as string)
     }
     console.warn("Form tidak valid", fieldErrors)
@@ -71,9 +73,9 @@ const handleScroll = () => {
   const currentScrollY = window.scrollY
 
   if (currentScrollY > lastScrollY && currentScrollY > 50) {
-    isVisible.value = false // scroll ke bawah
+    isVisible.value = false
   } else {
-    isVisible.value = true // scroll ke atas
+    isVisible.value = true
   }
 
   lastScrollY = currentScrollY
@@ -100,9 +102,23 @@ onUnmounted(() => {
   <div>
     <form @submit.prevent="onFormSubmit()" class="flex flex-col pb-6 gap-4 w-full md:w-56">
       <div class="flex flex-col gap-2">
-        <label class="text-sm" for="supplier">Nama Nelayan</label>
-        <InputText v-model="form.supplier" id="supplier" type="text" placeholder="Nama Nelayan" />
-        <small class="text-red-600">{{ errors.supplier }}</small>
+        <label class="text-sm" for="patner">Nama</label>
+        <InputText v-model="form.partner" id="supplier" type="text" placeholder="Nama..." />
+        <small class="text-red-600">{{ errors.partner }}</small>
+      </div>
+      <div class="flex flex-col gap-2">
+        <label class="text-sm" for="type">Tipe Transaksi</label>
+        <div class="flex flex-wrap gap-4">
+          <div class="flex items-center gap-2">
+            <RadioButton v-model="form.type" inputId="type1" name="type" value="purchase" />
+            <label for="type1">Pembelian</label>
+          </div>
+          <div class="flex items-center gap-2">
+            <RadioButton v-model="form.type" inputId="type2" name="type" value="sale" />
+            <label for="type2">Penjualan</label>
+          </div>
+        </div>
+        <small class="text-red-600">{{ errors.partner }}</small>
       </div>
       <div v-for="(item, index) in form.items" :key="index" class="p-4 border border-gray-300 rounded-md space-y-4">
         <div class="w-full flex justify-between items-center">

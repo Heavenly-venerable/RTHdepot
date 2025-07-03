@@ -8,7 +8,8 @@ export interface InvoiceItem {
 
 export interface InvoiceInterface {
   id: string,
-  supplier: string,
+  partner: string,
+  type: "sale" | "purchase",
   items: InvoiceItem[],
   total: number,
   createAt: Date,

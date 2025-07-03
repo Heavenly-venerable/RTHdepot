@@ -24,7 +24,13 @@ const onEdit = (data: any) => {
     </div>
     <DataTable :value="invoices" showGridlines scrollable tableStyle="min-width: 50rem">
       <Column field="id" header="Invoice ID" />
-      <Column field="supplier" header="Supplier"></Column>
+      <Column field="partner" header="Nama"></Column>
+      <Column header="Tipe Transaksi">
+        <template #body="slotProps">
+          <Tag :value="slotProps.data.type === 'sale' ? 'Penjualan' : 'pembelian'"
+            :severity="slotProps.data.type === 'sale' ? 'success' : 'info'" />
+        </template>
+      </Column>
       <Column header="Jumlah Ikan">
         <template #body="slotProps">
           {{ slotProps.data.items.length }}

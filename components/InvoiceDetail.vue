@@ -15,8 +15,10 @@ const { invoice } = useInvoice()
       </div>
       <div v-else class="space-y-6">
         <div class="text-sm text-zinc-600 dark:text-zinc-300">
-          <div><span class="font-medium">Supplier:</span> {{ invoice?.supplier }}</div>
+          <div><span class="font-medium">Nama:</span> {{ invoice?.partner }}</div>
           <div><span class="font-medium">Tanggal:</span> {{ formatDate(invoice?.createAt) }}</div>
+          <div><span class="font-medium">Tipe Transaksi:</span> {{ invoice?.type === "sale" ? "Penjualan" : "Pembelian"
+          }}</div>
         </div>
         <div>
           <h3 class="text-sm font-semibold text-zinc-700 dark:text-zinc-200 mb-2">Item:</h3>

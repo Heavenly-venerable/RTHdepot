@@ -45,7 +45,7 @@ export const useInvoice = (id?: string) => {
         method: "PATCH",
         body: payload
       })
-      useInvoices().refresh()
+      await useInvoices().refresh()
     } catch (error) {
       console.error("Failed to update invoice", error)
     }

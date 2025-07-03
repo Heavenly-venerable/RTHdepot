@@ -12,7 +12,8 @@ const { products } = useProducts()
 const { updateInvoice } = useInvoice(props.invoice?.id)
 
 const editForm = reactive({
-  supplier: "",
+  partner: "",
+  type: "purchase",
   items: [
     { product: null, quantity: 1, price: 0 }
   ]
@@ -51,7 +52,8 @@ watch(() => editForm.items.map(item => item.product), (newProducts, oldProducts)
 watch(() => products.value, (newProducts) => {
   if (!props.invoice) return
 
-  editForm.supplier = props.invoice.supplier ?? ""
+  editForm.partner = props.invoice.partner ?? ""
+  editForm.type = props.invoice.type ?? ""
 
   editForm.items = props.invoice.items?.map(item => ({
     product: newProducts.find(p => p.id === item.product.id) ?? null,
@@ -66,8 +68,21 @@ watch(() => products.value, (newProducts) => {
 <template>
   <form @submit.prevent="onFormSubmit()" class="w-full flex flex-col gap-4">
     <div class="flex flex-col gap-2">
-      <label class="text-sm" for="supplier">Nama Nelayan</label>
-      <InputText v-model="editForm.supplier" id="supplier" type="text" placeholder="Nama Nelayan" />
+      <label class="text-sm" for="partner">Nama</label>
+      <InputText v-model="editForm.partner" id="partner" type="text" placeholder="Nama..." />
+    </div>
+    <div class="flex flex-col gap-2">
+      <label class="text-sm" for="type">Tipe Transaksi</label>
+      <div class="flex flex-wrap gap-4">
+        <div class="flex items-center gap-2">
+          <RadioButton v-model="editForm.type" inputId="type1" name="EditType" value="purchase" />
+          <label for="type1">Pembelian</label>
+        </div>
+        <div class="flex items-center gap-2">
+          <RadioButton v-model="editForm.type" inputId="type2" name="EditType" value="sale" />
+          <label for="type2">Penjualan</label>
+        </div>
+      </div>
     </div>
     <div v-for="(item, index) in editForm.items" :key="index" class="p-4 border border-gray-300 rounded-md space-y-4">
       <div class="w-full flex justify-between items-center">

@@ -45,7 +45,7 @@ export const useProduct = (id?: string) => {
         method: "PATCH",
         body: payload
       })
-      useProducts().refresh()
+      await useProducts().refresh()
     } catch (error) {
       console.error("Failed to update product", error)
     }
