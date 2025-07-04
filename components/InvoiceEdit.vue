@@ -36,6 +36,11 @@ function removeItem(items, index) {
 }
 
 async function onFormSubmit() {
+  const hasNullProduct = editForm.items.some(item => item.product === null)
+  if (hasNullProduct) {
+    toast.add({ severity: "error", summary: "Gagal", detail: "Ada item tanpa produk", life: 3000 })
+    return
+  }
   updateInvoice(editForm)
   toast.add({ severity: 'info', summary: 'Diedit', detail: 'Invoice berhasil diedit', life: 3000 });
   emit("update:visible", !props.visible)
@@ -49,8 +54,8 @@ watch(() => editForm.items.map(item => item.product), (newProducts, oldProducts)
   })
 }, { deep: true })
 
-watch(() => products.value, (newProducts) => {
-  if (!props.invoice) return
+watch([() => products.value, () => props.invoice], ([newProducts, invoice]) => {
+  if (!invoice || !newProducts.length) return
 
   editForm.partner = props.invoice.partner ?? ""
   editForm.type = props.invoice.type ?? ""
