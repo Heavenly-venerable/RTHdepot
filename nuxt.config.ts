@@ -26,5 +26,8 @@ export default defineNuxtConfig({
     optimizeDeps: {
       exclude: ["primevue"]
     }
+  },
+  runtimeConfig: {
+    databaseUrl: process.env.DATABASE_URL || ""
   }
 })

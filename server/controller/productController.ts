@@ -1,14 +1,14 @@
 import { products } from "../data/products";
 import { Product } from "../models/product.model";
 import { EditProductSchema, ProductSchema } from "../schemas/product";
-import { ProductInterface } from "../types/product";
+import { NewProductInterface, ProductInterface } from "../types/product";
 
 export const ProductController = {
   async getAllProducts() {
-    return Product.findAll()
+    return await Product.findAll()
   },
   async getProductById(id: string) {
-    const existing = Product.findById(id)
+    const existing = await Product.findById(id)
     if (!existing) {
       return {
         success: false,
@@ -29,12 +29,11 @@ export const ProductController = {
       }
     }
 
-    const newProduct: ProductInterface = {
-      id: String(products.length + 1),
+    const newProduct: NewProductInterface = {
       ...parsed.data,
     }
 
-    Product.create(newProduct)
+    await Product.create(newProduct)
 
     return {
       success: true,
@@ -42,7 +41,7 @@ export const ProductController = {
     }
   },
   async updateProduct(id: string, data: Partial<Omit<ProductInterface, "id">>) {
-    const existing = Product.findById(id)
+    const existing = await Product.findById(id)
     if (!existing) {
       return {
         success: false,
@@ -64,7 +63,7 @@ export const ProductController = {
       ...parsed.data
     }
 
-    Product.update(id, updatedProduct)
+    await Product.update(id, updatedProduct)
 
     return {
       success: true,
@@ -72,7 +71,7 @@ export const ProductController = {
     }
   },
   async deleteProduct(id: string) {
-    const existing = Product.findById(id)
+    const existing = await Product.findById(id)
     if (!existing) {
       return {
         success: false,
@@ -80,7 +79,7 @@ export const ProductController = {
       }
     }
 
-    const deleted = Product.delete(id)
+    const deleted = await Product.delete(id)
     if (!deleted) {
       return {
         success: false,

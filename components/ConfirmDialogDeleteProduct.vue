@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const props = defineProps<{ id: string }>()
 
-const { deleteProduct } = useProducts()
+const { deleteProduct, refresh } = useProducts()
 const confirm = useConfirm()
 const toast = useToast()
 
@@ -22,7 +22,8 @@ const confirmDeleteInvoice = () => {
     },
     accept: async () => {
       try {
-        deleteProduct(props.id)
+        await deleteProduct(props.id)
+        await refresh()
         toast.add({ severity: 'warn', summary: 'Dihapus', detail: 'Product berhasil dihapus', life: 3000 });
       } catch (error) {
         console.error(error)

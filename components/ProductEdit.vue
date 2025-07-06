@@ -4,6 +4,7 @@ const props = defineProps<{
   visible: boolean
 }>()
 
+const { refresh } = useProducts()
 const { updateProduct } = useProduct(props.product?.id)
 const toast = useToast()
 
@@ -33,7 +34,8 @@ function validate() {
 
 async function onFormSubmit() {
   if (!validate()) return
-  updateProduct(form)
+  await updateProduct(form)
+  await refresh()
   toast.add({ severity: 'info', summary: 'Diedit', detail: 'Product berhasil diedit', life: 3000 });
   emit("update:visible", !props.visible)
 }

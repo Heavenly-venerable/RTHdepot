@@ -1,5 +1,5 @@
 export const useProducts = () => {
-  const { data: productsData, refresh, error } = useFetch("/api/products")
+  const { data: productsData, refresh, error } = useFetch("/api/products", { key: "products" })
 
   const products = computed(() => productsData.value?.data ?? [])
 
