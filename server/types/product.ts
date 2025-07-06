@@ -4,3 +4,5 @@ export interface ProductInterface {
   price: number,
   stock: number
 }
+
+export interface NewProductInterface extends Omit<ProductInterface, "id"> { }

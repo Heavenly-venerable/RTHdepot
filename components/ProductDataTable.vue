@@ -4,6 +4,10 @@ const { products } = useProducts()
 const editForm = ref(null)
 const visible = ref(false)
 
+function prettyId(id: string) {
+  return `${id.slice(0, 4)}...${id.slice(-4)}`
+}
+
 const onEdit = (data: any) => {
   editForm.value = data
   visible.value = true
@@ -19,7 +23,11 @@ const onEdit = (data: any) => {
       </NuxtLink>
     </div>
     <DataTable :value="products" showGridlines scrollable tableStyle="min-width: 50rem">
-      <Column field="id" header="ID"></Column>
+      <Column header="ID">
+        <template #body="slotProps">
+          {{ prettyId(slotProps.data.id) }}
+        </template>
+      </Column>
       <Column field="name" header="Name"></Column>
       <Column header="Total Harga">
         <template #body="slotProps">

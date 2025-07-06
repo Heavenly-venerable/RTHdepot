@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^1.0.1",
     "@nuxtjs/tailwindcss": "6.13.2",
     "@primeuix/themes": "^1.1.1",
     "@primevue/forms": "^4.3.5",
