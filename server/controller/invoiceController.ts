@@ -1,24 +1,26 @@
-import { invoices } from "../data/invoices"
 import { Invoice } from "../models/invoice.model"
-import type { InvoiceInterface } from "../types/invoice"
+import { Product } from "../models/product.model"
 import { CreateInvoiceSchema, EditInvoiceSchema } from "../schemas/invoice"
-import { products } from "../data/products"
+import { CreateInvoiceWithItems, UpdateInvoiceWithItems } from "../types/invoice"
 
 export const InvoiceController = {
   async getAllInvoices() {
-    return Invoice.findAll()
+    const invoices = await Invoice.findAll()
+    return invoices
   },
+
   async getInvoiceById(id: string) {
-    const existing = Invoice.findById(id)
+    const existing = await Invoice.findById(id)
     if (!existing) {
       return {
         success: false,
         message: `Invoice dengan ID: ${id} tidak ditemukan`
       }
     }
-    return Invoice.findById(id)
+    return existing
   },
-  async createInvoice(data: Omit<InvoiceInterface, "id" | "createAt" | "total">) {
+
+  async createInvoice(data: CreateInvoiceWithItems) {
     const parsed = CreateInvoiceSchema.safeParse(data)
 
     if (!parsed.success) {
@@ -29,37 +31,54 @@ export const InvoiceController = {
       }
     }
 
-    const { items } = parsed.data
+    const { partner, type, items } = parsed.data
+
+    let total = 0
 
     for (const item of items) {
-      const product = products.find(p => p.id === item.product.id)
+      const product = await Product.findById(item.product.id)
       if (!product) {
         return {
           success: false,
-          message: `Product dengan ID ${item.product.id} tidak ditemukan`
+          message: `Produk dengan ID ${item.product.id} tidak ditemukan`
         }
       }
-      product.stock += item.quantity
+
+      if (type === "purchase") {
+        await Product.update(product.id, {
+          ...product,
+          stock: product.stock + item.quantity
+        })
+      } else if (type === "sale") {
+        await Product.update(product.id, {
+          ...product,
+          stock: product.stock - item.quantity
+        })
+      }
+
+      total += item.price * item.quantity
     }
 
-    const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
-
-    const newInvoice: InvoiceInterface = {
-      id: String(invoices.length + 1),
-      ...parsed.data,
+    const created = await Invoice.create({
+      partner,
+      type,
       total,
-      createAt: new Date()
-    }
-
-    Invoice.create(newInvoice)
+      items: items.map((item) => ({
+        productId: item.product.id,
+        quantity: item.quantity,
+        price: item.price
+      }))
+    })
 
     return {
       success: true,
       message: "Invoice berhasil dibuat",
+      data: created
     }
   },
-  async updateInvoice(id: string, data: Partial<Omit<InvoiceInterface, "id" | "createAt" | "total">>) {
-    const existing = Invoice.findById(id)
+
+  async updateInvoice(id: string, data: UpdateInvoiceWithItems) {
+    const existing = await Invoice.findById(id)
     if (!existing) {
       return {
         success: false,
@@ -77,48 +96,91 @@ export const InvoiceController = {
     }
 
     const items = parsed.data.items
-    if (!items) {
+    if (!items || items.length === 0) {
       return {
         success: false,
         message: "Item invoice tidak boleh kosong"
       }
     }
 
-    for (const oldItem of existing.items) {
-      const product = products.find(p => p.id === oldItem.product.id)
-      if (product) {
-        product.stock -= oldItem.quantity
+    if (existing.type === "purchase") {
+      for (const oldItem of existing.items) {
+        if (!oldItem || !oldItem.productId || !oldItem.quantity) continue
+        const product = await Product.findById(oldItem.productId)
+        if (product) {
+          await Product.update(product.id, {
+            ...product,
+            stock: product.stock - oldItem.quantity
+          })
+        }
+      }
+    } else if (existing.type === "sale") {
+      for (const oldItem of existing.items) {
+        if (!oldItem || !oldItem.productId || !oldItem.quantity) continue
+        const product = await Product.findById(oldItem.productId)
+        if (product) {
+          await Product.update(product.id, {
+            ...product,
+            stock: product.stock - oldItem.quantity
+          })
+        }
       }
     }
 
-    for (const newItem of items) {
-      const product = products.find(p => p.id === newItem.product.id)
-      if (!product) {
-        return {
-          success: false,
-          message: `Product dengan ID ${newItem.product.id} tidak ditemukan`
+    if (parsed.data.type === "purchase") {
+      for (const newItem of items) {
+        const product = await Product.findById(newItem.product.id)
+        if (!product) {
+          return {
+            success: false,
+            message: `Produk dengan ID ${newItem.product.id} tidak ditemukan`
+          }
         }
+
+        await Product.update(product.id, {
+          ...product,
+          stock: product.stock + newItem.quantity
+        })
       }
-      product.stock += newItem.quantity
+    } else if (parsed.data.type === "sale") {
+      for (const newItem of items) {
+        const product = await Product.findById(newItem.product.id)
+        if (!product) {
+          return {
+            success: false,
+            message: `Produk dengan ID ${newItem.product.id} tidak ditemukan`
+          }
+        }
+
+        await Product.update(product.id, {
+          ...product,
+          stock: product.stock - newItem.quantity
+        })
+      }
     }
 
     const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
 
-    const updatedInvoice: InvoiceInterface = {
+    const updated = await Invoice.update(id, {
       ...existing,
       ...parsed.data,
       total,
-    }
-
-    Invoice.update(id, updatedInvoice)
+      items: items.map((item) => ({
+        productId: item.product.id,
+        quantity: item.quantity,
+        price: item.price
+      }))
+    })
 
     return {
       success: true,
-      message: `Invoice dengan ID: ${id} berhasil diperbarui`
+      message: `Invoice dengan ID: ${id} berhasil diperbarui`,
+      data: updated
     }
   },
+
   async deleteInvoice(id: string) {
-    const existing = Invoice.findById(id)
+    const existing = await Invoice.findById(id)
     if (!existing) {
       return {
         success: false,
@@ -126,14 +188,31 @@ export const InvoiceController = {
       }
     }
 
-    for (const item of existing.items) {
-      const product = products.find(p => p.id === item.product.id)
-      if (product) {
-        product.stock -= item.quantity
+    if (existing.type === "purchase") {
+      for (const item of existing.items) {
+        if (!item || !item.productId || !item.quantity) continue
+        const product = await Product.findById(item.productId)
+        if (product) {
+          await Product.update(product.id, {
+            ...product,
+            stock: product.stock - item.quantity
+          })
+        }
+      }
+    } else if (existing.type === "sale") {
+      for (const item of existing.items) {
+        if (!item || !item.productId || !item.quantity) continue
+        const product = await Product.findById(item.productId)
+        if (product) {
+          await Product.update(product.id, {
+            ...product,
+            stock: product.stock + item.quantity
+          })
+        }
       }
     }
 
-    const deleted = Invoice.delete(id)
+    const deleted = await Invoice.delete(id)
     if (!deleted) {
       return {
         success: false,

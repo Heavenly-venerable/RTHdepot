@@ -1,7 +1,6 @@
 import { eq } from "drizzle-orm"
 import { db } from "../db"
 import { InsertProduct, products } from "../db/schema"
-import { ProductInterface } from "../types/product"
 
 export const ProductQueries = {
   async findAll() {

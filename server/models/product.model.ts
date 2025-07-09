@@ -1,5 +1,5 @@
+import { InsertProduct } from "../db/schema"
 import { ProductQueries } from "../queries/product.queries"
-import { NewProductInterface, ProductInterface } from "../types/product"
 
 export const Product = {
   findAll() {
@@ -8,10 +8,10 @@ export const Product = {
   findById(id: string) {
     return ProductQueries.findById(id)
   },
-  create(data: NewProductInterface) {
+  create(data: InsertProduct) {
     return ProductQueries.create(data)
   },
-  update(id: string, updateData: Partial<Omit<ProductInterface, "id">>) {
+  update(id: string, updateData: InsertProduct) {
     return ProductQueries.update(id, updateData)
   },
   delete(id: string) {
