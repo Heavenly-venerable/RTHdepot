@@ -1,5 +1,5 @@
 export const useInvoices = () => {
-  const { data: invoices, refresh, error } = useFetch("/api/invoices")
+  const { data: invoices, refresh, status, error } = useFetch("/api/invoices")
 
   const createInvoice = async (form: any) => {
     try {
@@ -28,6 +28,7 @@ export const useInvoices = () => {
     invoices,
     refresh,
     error,
+    status,
     createInvoice,
     deleteInvoice
   }

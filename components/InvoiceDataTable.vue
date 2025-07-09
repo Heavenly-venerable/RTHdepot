@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { invoices } = useInvoices()
+const { invoices, status } = useInvoices()
 
 const editForm = ref(null)
 const visible = ref(false)
@@ -22,7 +22,7 @@ const onEdit = (data: any) => {
         <Button label="New Invoice" icon="pi pi-plus" />
       </NuxtLink>
     </div>
-    <DataTable :value="invoices" showGridlines scrollable tableStyle="min-width: 50rem">
+    <DataTable :value="invoices" showGridlines scrollable tableStyle="min-width: 50rem" :loading="status.pending">
       <Column field="id" header="Invoice ID" />
       <Column field="partner" header="Nama"></Column>
       <Column header="Tipe Transaksi">

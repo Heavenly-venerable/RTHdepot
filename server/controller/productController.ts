@@ -1,7 +1,6 @@
-import { products } from "../data/products";
+import { InsertProduct } from "../db/schema";
 import { Product } from "../models/product.model";
 import { EditProductSchema, ProductSchema } from "../schemas/product";
-import { NewProductInterface, ProductInterface } from "../types/product";
 
 export const ProductController = {
   async getAllProducts() {
@@ -18,7 +17,7 @@ export const ProductController = {
 
     return existing
   },
-  async createProduct(data: Omit<ProductInterface, "id">) {
+  async createProduct(data: InsertProduct) {
     const parsed = ProductSchema.omit({ id: true }).safeParse(data)
 
     if (!parsed.success) {
@@ -29,7 +28,7 @@ export const ProductController = {
       }
     }
 
-    const newProduct: NewProductInterface = {
+    const newProduct: InsertProduct = {
       ...parsed.data,
     }
 
@@ -40,7 +39,7 @@ export const ProductController = {
       message: "Product berhasil ditambahkan",
     }
   },
-  async updateProduct(id: string, data: Partial<Omit<ProductInterface, "id">>) {
+  async updateProduct(id: string, data: InsertProduct) {
     const existing = await Product.findById(id)
     if (!existing) {
       return {

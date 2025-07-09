@@ -1,33 +1,21 @@
-import { invoices } from "../data/invoices"
-import type { InvoiceInterface } from "../types/invoice"
+import { InvoiceQueries } from "../queries/invoice.queries"
+import { CreateInvoiceWithItems, UpdateInvoiceWithItems } from "../types/invoice"
+
 
 export const Invoice = {
   findAll() {
-    return invoices
+    return InvoiceQueries.findAll()
   },
   findById(id: string) {
-    return invoices.find(i => i.id === id)
+    return InvoiceQueries.findById(id)
   },
-  create(data: InvoiceInterface) {
-    invoices.push(data)
+  create(data: CreateInvoiceWithItems) {
+    return InvoiceQueries.create(data)
   },
-  update(id: string, updateData: Partial<Omit<InvoiceInterface, "id">>) {
-    const index = invoices.findIndex(i => i.id === id)
-
-    if (index === -1) return null
-
-    invoices[index] = {
-      ...invoices[index],
-      ...updateData
-    }
-
-    return invoices[index]
+  update(id: string, updateData: UpdateInvoiceWithItems) {
+    return InvoiceQueries.updateWithItems(id, updateData)
   },
   delete(id: string) {
-    const index = invoices.findIndex(i => i.id === id)
-    if (index === -1) return false
-
-    invoices.splice(index, 1)
-    return true
+    return InvoiceQueries.delete(id)
   }
 }
