@@ -4,11 +4,12 @@ import { InsertProduct, products } from "../db/schema"
 
 export const ProductQueries = {
   async findAll() {
-    return await db.select().from(products).orderBy(products.id)
+    return await db.query.products.findMany()
   },
   async findById(id: string) {
-    const result = await db.select().from(products).where(eq(products.id, id)).limit(1)
-    return result[0] || null
+    return await db.query.products.findFirst({
+      where: eq(products.id, id)
+    })
   },
   async create(data: InsertProduct) {
     await db.insert(products).values(data)

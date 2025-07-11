@@ -5,54 +5,28 @@ import { CreateInvoiceWithItems, UpdateInvoiceWithItems } from "../types/invoice
 
 export const InvoiceQueries = {
   async findAll() {
-    const rows = await db.select({ invoice: invoices, item: invoiceItems, product: products }).from(invoices).leftJoin(invoiceItems, eq(invoices.id, invoiceItems.invoiceId)).leftJoin(products, eq(invoiceItems.productId, products.id)).orderBy(invoices.createAt)
-
-    const grouped: Record<string, any> = {}
-
-    for (const row of rows) {
-      const inv = row.invoice
-      if (!grouped[inv.id]) {
-        grouped[inv.id] = {
-          ...inv,
-          items: []
+    const result = await db.query.invoices.findMany({
+      orderBy: (invoices, { asc }) => [asc(invoices.createAt)],
+      with: {
+        items: {
+          with: { product: {} }
         }
       }
-      if (row.item && row.product) {
-        grouped[inv.id].items.push({
-          ...row.item,
-          product: row.product
-        })
-      }
-    }
+    })
 
-    return Object.values(grouped)
+    return result
   },
   async findById(id: string) {
-    const rows = await db
-      .select({
-        invoice: invoices,
-        item: invoiceItems,
-        product: products
-      })
-      .from(invoices)
-      .leftJoin(invoiceItems, eq(invoices.id, invoiceItems.invoiceId))
-      .leftJoin(products, eq(invoiceItems.productId, products.id))
-      .where(eq(invoices.id, id))
+    const result = await db.query.invoices.findFirst({
+      where: eq(invoices.id, id),
+      with: {
+        items: {
+          with: { product: {} }
+        }
+      }
+    })
 
-    if (rows.length === 0) return null
-
-    const invoice = rows[0].invoice
-    const items = rows
-      .filter(r => r.item && r.product)
-      .map(r => ({
-        ...r.item,
-        product: r.product
-      }))
-
-    return {
-      ...invoice,
-      items
-    }
+    return result
   },
   async create(data: CreateInvoiceWithItems) {
     const [createdInvoice] = await db.insert(invoices).values({ partner: data.partner, type: data.type, total: data.total }).returning()

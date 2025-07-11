@@ -1,4 +1,5 @@
-import { pgTable, uuid, text, integer, timestamp, primaryKey, customType } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
+import { pgTable, uuid, text, timestamp, primaryKey, customType } from "drizzle-orm/pg-core";
 
 const numericAsNumber = customType<{ data: number, driverData: string }>({
   dataType() {
@@ -34,6 +35,25 @@ export const invoiceItems = pgTable("invoice_items", {
     pk: primaryKey({ columns: [table.invoiceId, table.productId] }),
   };
 });
+
+export const productRelations = relations(products, ({ many }) => ({
+  invoiceItems: many(invoiceItems),
+}));
+
+export const invoiceRelations = relations(invoices, ({ many }) => ({
+  items: many(invoiceItems),
+}));
+
+export const invoiceItemRelations = relations(invoiceItems, ({ one }) => ({
+  invoice: one(invoices, {
+    fields: [invoiceItems.invoiceId],
+    references: [invoices.id],
+  }),
+  product: one(products, {
+    fields: [invoiceItems.productId],
+    references: [products.id],
+  }),
+}));
 
 export type InsertProduct = typeof products.$inferInsert
 export type SelectProduct = typeof products.$inferSelect
