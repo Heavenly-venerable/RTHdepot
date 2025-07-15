@@ -2,13 +2,14 @@ import { users } from "../data/users"
 import { User } from "../models/user.model"
 import { UserSchema } from "../schemas/user"
 import { UserInterface } from "../types/users"
+import type { H3Event } from "h3"
 
 export const UserController = {
   async getAllUsers() {
     return await User.findAll()
   },
   async getUserById(id: string) {
-    const existing = await User.findById(id)
+    const existing = await User.findOne({ id })
     if (!existing) {
       return {
         success: false,
@@ -30,7 +31,7 @@ export const UserController = {
 
     const { password, ...rest } = parsed.data
 
-    const existingUser = users.find(user => user.email === rest.email)
+    const existingUser = await User.findOne({ email: rest.email })
 
     if (existingUser) {
       return {
@@ -52,6 +53,39 @@ export const UserController = {
     return {
       success: true,
       message: "User berhasil dibuat"
+    }
+  },
+  async loginUser(data: { email: string; password: string }, event: H3Event) {
+    const existingUser = await User.findOne({ email: data.email })
+
+    if (!existingUser) {
+      return {
+        success: false,
+        message: "User tidak ditemukan"
+      }
+    }
+
+    const validPassword = verifyPassword(existingUser.password, data.password)
+
+    if (!validPassword) {
+      return {
+        success: false,
+        message: "Invalid credentials"
+      };
+    }
+
+    await setUserSession(event, {
+      user: {
+        id: existingUser.id,
+        name: existingUser.name,
+        email: existingUser.email,
+        role: existingUser.role,
+      }
+    })
+
+    return {
+      success: true,
+      message: "User berhasil login"
     }
   }
 }

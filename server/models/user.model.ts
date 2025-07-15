@@ -5,8 +5,10 @@ export const User = {
   findAll() {
     return users
   },
-  findById(id: string) {
-    return users.find((user) => user.id === id)
+  findOne(query: Partial<UserInterface>) {
+    return users.find((user) => {
+      return Object.entries(query).every(([key, value]) => user[key as keyof UserInterface] === value)
+    })
   },
   create(data: UserInterface) {
     users.push(data)
