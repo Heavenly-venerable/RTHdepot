@@ -1,10 +1,10 @@
 import { z } from "zod";
+import { Role } from "../types/users";
 
 export const UserSchema = z.object({
-  id: z.string(),
   name: z.string(),
   email: z.string(),
   password: z.string(),
-  role: z.enum(["superadmin", "admin", "staff", "user"]),
+  role: z.nativeEnum(Role),
   isActive: z.boolean(),
 })

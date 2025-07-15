@@ -8,6 +8,7 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss',
     '@vueuse/nuxt',
     '@primevue/nuxt-module',
+    'nuxt-auth-utils'
   ],
   primevue: {
     options: {
