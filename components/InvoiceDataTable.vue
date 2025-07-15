@@ -18,7 +18,7 @@ const onEdit = (data: any) => {
   <div class="space-y-4">
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-xl font-semibold">Daftar Invoice</h2>
-      <NuxtLink to="/invoices/create">
+      <NuxtLink to="/dashboard/invoices/create">
         <Button label="New Invoice" icon="pi pi-plus" />
       </NuxtLink>
     </div>
@@ -49,7 +49,7 @@ const onEdit = (data: any) => {
       <Column>
         <template #body="slotProps">
           <div class="flex justify-center items-center gap-x-2">
-            <NuxtLink :to="{ path: `/invoices/${slotProps.data.id}` }">
+            <NuxtLink :to="{ path: `/dashboard/invoices/${slotProps.data.id}` }">
               <Button rounded severity="info" icon="pi pi-eye" />
             </NuxtLink>
             <Button @click="onEdit(slotProps.data)" severity="warn" rounded icon="pi pi-pencil" />

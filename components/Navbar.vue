@@ -11,11 +11,11 @@ const menuItems = ref([
   {
     label: 'Invoices',
     icon: 'pi pi-file',
-    to: '/invoices',
+    to: '/dashboard/invoices',
     children: [
       {
         label: '+ Create Invoice',
-        to: '/invoices/create',
+        to: '/dashboard/invoices/create',
         class: 'pl-8 py-2 text-sm text-zinc-600 hover:text-primary'
       }
     ]
@@ -23,11 +23,11 @@ const menuItems = ref([
   {
     label: 'Products',
     icon: 'pi pi-box',
-    to: '/products',
+    to: '/dashboard/products',
     children: [
       {
         label: '+ Create Product',
-        to: '/products/create',
+        to: '/dashboard/products/create',
         class: 'pl-8 py-2 text-sm text-zinc-600 hover:text-primary'
       }
     ]

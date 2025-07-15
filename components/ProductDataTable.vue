@@ -18,7 +18,7 @@ const onEdit = (data: any) => {
   <div class="space-y-4">
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-xl font-semibold">Daftar Product</h2>
-      <NuxtLink to="/products/create">
+      <NuxtLink to="/dashboard/products/create">
         <Button label="New Product" icon="pi pi-plus" />
       </NuxtLink>
     </div>
