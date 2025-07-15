@@ -1,4 +1,5 @@
 <script setup lang="ts">
+definePageMeta({ layout: 'dashboard' })
 const { data: invoices } = await useFetch("/api/invoices")
 
 const todayInvoices = computed(() => invoices.value?.filter((invoice) => isToday(invoice.createAt)) ?? [])

@@ -102,8 +102,8 @@ onUnmounted(() => {
   <div>
     <form @submit.prevent="onFormSubmit()" class="flex flex-col pb-6 gap-4 w-full md:w-56">
       <div class="flex flex-col gap-2">
-        <label class="text-sm" for="patner">Nama</label>
-        <InputText v-model="form.partner" id="supplier" type="text" placeholder="Nama..." />
+        <label class="text-sm" for="partner">Nama</label>
+        <InputText v-model="form.partner" id="partner" type="text" placeholder="Nama..." />
         <small class="text-red-600">{{ errors.partner }}</small>
       </div>
       <div class="flex flex-col gap-2">

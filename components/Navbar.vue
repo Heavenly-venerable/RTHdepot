@@ -6,7 +6,7 @@ const menuItems = ref([
   {
     label: 'Dashboard',
     icon: 'pi pi-home',
-    to: '/'
+    to: '/dashboard'
   },
   {
     label: 'Invoices',
