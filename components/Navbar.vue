@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const { clear: clearSession } = useUserSession()
 const visible = ref(false);
 const route = useRoute()
 
@@ -34,6 +35,11 @@ const menuItems = ref([
   }
 ])
 
+async function logout() {
+  await clearSession();
+  await navigateTo("/auth/login");
+}
+
 watch(() => route.fullPath, () => {
   visible.value = false
 })
@@ -66,6 +72,9 @@ watch(() => route.fullPath, () => {
               </div>
             </li>
           </ul>
+          <div class="flex justify-center px-4">
+            <Button @click="logout()" class="mt-4" label="Logout" icon="pi pi-sign-out" fluid />
+          </div>
         </div>
       </div>
     </template>

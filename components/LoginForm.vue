@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { loggedIn, user } = useUserSession()
+const { fetch: refreshSession } = useUserSession()
 const toast = useToast()
 
 const form = reactive({
@@ -23,7 +23,8 @@ async function onFormSubmit() {
     } else {
       toast.add({ severity: "success", summary: "Login berhasil", life: 3000 })
 
-      navigateTo("/dashboard")
+      await refreshSession()
+      await navigateTo("/dashboard")
     }
   } catch (error) {
     toast.add({ severity: 'error', summary: 'Login gagal', detail: error?.data?.message || 'Terjadi kesalahan saat login', life: 4000 })
