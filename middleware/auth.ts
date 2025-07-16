@@ -1,7 +1,7 @@
-export default defineNuxtRouteMiddleware((to, from) => {
+export default defineNuxtRouteMiddleware(async (to, from) => {
   const { loggedIn } = useUserSession()
 
   if (!loggedIn.value) {
-    return navigateTo("/auth/login?message=unauthorized")
+    return await navigateTo("/auth/login?message=unauthorized")
   }
 })

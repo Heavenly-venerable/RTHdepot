@@ -32,6 +32,11 @@ const menuItems = ref([
         class: 'pl-8 py-2 text-sm text-zinc-600 hover:text-primary'
       }
     ]
+  },
+  {
+    label: 'Users',
+    icon: 'pi pi-users',
+    to: '/dashboard/users',
   }
 ])
 
