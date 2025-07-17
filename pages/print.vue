@@ -6,11 +6,13 @@
 </template>
 
 <script setup lang="ts">
+import { ref, computed } from 'vue'
 const { $bluetooth } = useNuxtApp()
-import { ref } from 'vue'
 
+// Bluetooth printer characteristic
 const printerChar = ref<BluetoothRemoteGATTCharacteristic | null>(null)
 
+// Connect ke printer
 async function connect() {
   try {
     const { characteristic } = await $bluetooth.requestPrinter()
@@ -22,32 +24,67 @@ async function connect() {
   }
 }
 
-// Fungsi bantu format ESC/POS
+// ESC/POS encoder helper
 function toEscPos(text: string): Uint8Array {
   const encoder = new TextEncoder()
-  const line = encoder.encode(text + '\n')
-  return line
+  return encoder.encode(text + '\n')
 }
 
+// Format helpers
+function formatCurrency(value: number): string {
+  return `Rp${value.toLocaleString('id-ID')}`
+}
+function formatDate(value: string | Date): string {
+  return new Date(value).toLocaleDateString('id-ID')
+}
+
+// Fetch data invoice
+const { invoices } = useInvoices()
+
+// Print invoice ke printer
 async function printInvoice() {
-  if (!printerChar.value) return
+  if (!printerChar.value || !invoices.value || invoices.value.length === 0) return
+
+  const invoice = invoices.value[0]
 
   const commands = [
     toEscPos('\x1B\x40'), // initialize
-    toEscPos('*** My Store ***'),
-    toEscPos(`Invoice #: INV-${Date.now()}`),
-    toEscPos('Item A        1 x $10'),
-    toEscPos('Item B        2 x $5'),
-    toEscPos('----------------------'),
-    toEscPos('Total: $20'),
+
+    // H1 - Judul Toko Besar
+    toEscPos('\x1D\x21\x00'),
+    toEscPos('*** DEPOT RTH ***'),
+
+    // H2 - Informasi Invoice
+    toEscPos('\x1D\x21\x00'),
+    toEscPos(`Invoice #: INV-${invoice.id}`),
+    toEscPos(`Tanggal : ${formatDate(invoice.createAt)}`),
+    toEscPos(`Nama Nelayan: ${invoice.partner}`),
+
+    // Normal size untuk isi item
+    toEscPos('\x1D\x21\x00'),
+    ...invoice.items.map((item: any) => {
+      const name = item.product.name.padEnd(14)
+      const qtyPrice = `${item.quantity} x ${formatCurrency(item.price)}`
+      return toEscPos(`${name}${qtyPrice}`)
+    }),
+
+    toEscPos('--------------------------'),
+
+    // H2 - Total
+    toEscPos('\x1D\x21\x01'),
+    toEscPos(`Total: ${formatCurrency(invoice.total)}`),
+
+    // Footer Normal
+    toEscPos('\x1D\x21\x00'),
     toEscPos('\n\n'),
-    toEscPos('Thank you!'),
-    toEscPos('\x1D\x56\x41\x10'), // cut paper
+    toEscPos('Terima kasih'),
+    toEscPos('\n\n'),
   ]
 
   for (const cmd of commands) {
     await $bluetooth.send(printerChar.value, cmd)
   }
+
   alert('Invoice sent to printer')
 }
 </script>

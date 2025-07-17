@@ -4,12 +4,11 @@ export default defineNuxtPlugin(nuxtApp => {
       bluetooth: {
         async requestPrinter() {
           const device = await navigator.bluetooth.requestDevice({
-            filters: [{ services: ['0000ffe0-0000-1000-8000-00805f9b34fb'] }], // ganti sesuai printer
-            optionalServices: ['0000ffe0-0000-1000-8000-00805f9b34fb'],
+            filters: [{ services: ['e7810a71-73ae-499d-8c15-faa9aef0c3f2'] }], // ganti sesuai printer
           })
           const server = await device.gatt?.connect()
-          const service = await server?.getPrimaryService('0000ffe0-0000-1000-8000-00805f9b34fb')
-          const characteristic = await service?.getCharacteristic('0000ffe1-0000-1000-8000-00805f9b34fb')
+          const service = await server?.getPrimaryService('e7810a71-73ae-499d-8c15-faa9aef0c3f2')
+          const characteristic = await service?.getCharacteristic('bef8d6c9-9c21-4c9e-b632-bd58c1009f9f')
           return { device, characteristic }
         },
         async send(characteristic, data: Uint8Array) {
