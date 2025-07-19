@@ -1,6 +1,6 @@
 import { users } from "../data/users"
 import { User } from "../models/user.model"
-import { UserSchema } from "../schemas/user"
+import { EditUserSchema, UserSchema } from "../schemas/user"
 import { UserInterface } from "../types/users"
 import type { H3Event } from "h3"
 
@@ -18,7 +18,7 @@ export const UserController = {
     }
     return existing
   },
-  async createUser(data: Omit<UserInterface, "id" | "password" | "createdAt" | "isActive">) {
+  async createUser(data: Omit<UserInterface, "id" | "createdAt" | "isActive">) {
     const parsed = UserSchema.safeParse(data)
     if (!parsed.success) {
       return {
@@ -65,7 +65,7 @@ export const UserController = {
       }
     }
 
-    const validPassword = verifyPassword(existingUser.password, data.password)
+    const validPassword = await verifyPassword(existingUser.password, data.password)
 
     if (!validPassword) {
       return {
@@ -86,6 +86,44 @@ export const UserController = {
     return {
       success: true,
       message: "User berhasil login"
+    }
+  },
+  async updateUser(id: string, data: Partial<UserInterface>) {
+    const user = await User.findOne({ id })
+    if (!user) {
+      return {
+        success: false,
+        message: "User tidak ditemukan"
+      }
+    }
+    const parsed = EditUserSchema.safeParse(data)
+    if (!parsed.success) {
+      return {
+        success: false,
+        message: "Data tidak valid",
+        errors: parsed.error.flatten()
+      }
+    }
+
+    if (parsed.data.email && parsed.data.email !== user.email) {
+      const emailExists = await User.findOne({ email: parsed.data.email })
+      if (emailExists) {
+        return {
+          success: false,
+          message: "Email sudah digunakan oleh user lain"
+        }
+      }
+    }
+
+    const updated = await User.update(id, {
+      ...user,
+      ...parsed.data
+    })
+
+    return {
+      success: true,
+      message: `User dengan ID: ${id} berhasil diperbarui`,
+      updated
     }
   }
 }

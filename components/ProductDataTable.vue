@@ -50,7 +50,7 @@ const onEdit = (data: any) => {
         <p class="text-lg text-center py-4">Loading data produk. Mohon tunggu...</p>
       </template>
     </DataTable>
-    <Dialog v-model:visible="visible" modal header="Edit Invoice" class="w-80">
+    <Dialog v-model:visible="visible" modal header="Edit Product" class="w-80">
       <ProductEdit v-model:visible="visible" :product="editForm" />
     </Dialog>
   </div>

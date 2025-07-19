@@ -12,5 +12,14 @@ export const User = {
   },
   create(data: UserInterface) {
     users.push(data)
+  },
+  update(id: string, updateData: Partial<Omit<UserInterface, "id">>) {
+    const index = users.findIndex(user => user.id === id)
+    if (index === -1) return null
+    users[index] = {
+      ...users[index],
+      ...updateData
+    }
+    return users[index]
   }
 } 

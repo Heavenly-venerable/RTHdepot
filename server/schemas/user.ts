@@ -7,3 +7,5 @@ export const UserSchema = z.object({
   password: z.string(),
   role: z.nativeEnum(Role),
 })
+
+export const EditUserSchema = UserSchema.extend({ isActive: z.boolean() }).partial()

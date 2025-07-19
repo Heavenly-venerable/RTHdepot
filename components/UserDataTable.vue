@@ -1,6 +1,14 @@
 <script setup lang="ts">
 const { users } = useUsers()
 
+const editForm = ref(null)
+const visible = ref(false)
+
+const onEdit = (data: any) => {
+  editForm.value = data
+  visible.value = true
+}
+
 function getSeverity(role) {
   switch (role) {
     case 'superadmin':
@@ -45,6 +53,13 @@ function getSeverity(role) {
           {{ formatDate(slotProps.data.createdAt) }}
         </template>
       </Column>
+      <Column>
+        <template #body="slotProps">
+          <div class="flex justify-center items-center gap-x-2">
+            <Button @click="onEdit(slotProps.data)" severity="warn" rounded icon="pi pi-pencil" />
+          </div>
+        </template>
+      </Column>
       <template #empty>
         <p class="text-lg text-center py-4">Tidak ada data yang ditemukan</p>
       </template>
@@ -52,5 +67,8 @@ function getSeverity(role) {
         <p class="text-lg text-center py-4">Loading data produk. Mohon tunggu...</p>
       </template>
     </DataTable>
+    <Dialog v-model:visible="visible" modal header="Edit User" class="w-80">
+      <UserEdit v-model:visible="visible" :user="editForm" />
+    </Dialog>
   </div>
 </template>
