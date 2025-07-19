@@ -21,5 +21,11 @@ export const User = {
       ...updateData
     }
     return users[index]
+  },
+  delete(id: string) {
+    const index = users.findIndex(user => user.id === id)
+    if (index === -1) return null
+    users.splice(index, 1)
+    return true
   }
 } 

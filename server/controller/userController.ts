@@ -125,5 +125,28 @@ export const UserController = {
       message: `User dengan ID: ${id} berhasil diperbarui`,
       updated
     }
+  },
+  async deleteUser(id: string) {
+    const existing = await User.findOne({ id })
+    if (!existing) {
+      return {
+        success: false,
+        message: `User dengan ID: ${id} tidak ditemukan`
+      }
+    }
+
+    const deleted = await User.delete(id)
+    if (!deleted) {
+      return {
+        success: false,
+        message: `Gagal menghapus user dengan ID: ${id}`
+      }
+    }
+
+    return {
+      success: true,
+      message: `User dengan ID: ${id} berhasil dihapus`
+    }
+
   }
 }

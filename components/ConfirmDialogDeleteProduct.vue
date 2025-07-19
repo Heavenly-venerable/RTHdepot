@@ -5,7 +5,7 @@ const { deleteProduct, refresh } = useProducts()
 const confirm = useConfirm()
 const toast = useToast()
 
-const confirmDeleteInvoice = () => {
+const confirmDeleteProduct = () => {
   confirm.require({
     message: 'Apakah Anda yakin ingin menghapus product ini?',
     header: 'Konfirmasi Penghapusan Product',
@@ -27,7 +27,7 @@ const confirmDeleteInvoice = () => {
         toast.add({ severity: 'warn', summary: 'Dihapus', detail: 'Product berhasil dihapus', life: 3000 });
       } catch (error) {
         console.error(error)
-        toast.add({ severity: 'error', summary: 'Gagal menghapus invoice', life: 3000 });
+        toast.add({ severity: 'error', summary: 'Gagal menghapus product', life: 3000 });
       }
     },
     reject: () => {
@@ -39,6 +39,6 @@ const confirmDeleteInvoice = () => {
 
 <template>
   <div>
-    <Button @click="confirmDeleteInvoice()" severity="danger" rounded icon="pi pi-trash" />
+    <Button @click="confirmDeleteProduct()" severity="danger" rounded icon="pi pi-trash" />
   </div>
 </template>

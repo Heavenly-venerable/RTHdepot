@@ -1,20 +1,35 @@
-import { InsertProduct } from "../db/schema"
-import { ProductQueries } from "../queries/product.queries"
+import { products } from "../data/products"
+import { ProductInterface } from "../types/product"
 
 export const Product = {
   findAll() {
-    return ProductQueries.findAll()
+    return products
   },
   findById(id: string) {
-    return ProductQueries.findById(id)
+    return products.find(p => p.id === id)
   },
-  create(data: InsertProduct) {
-    return ProductQueries.create(data)
+  create(data: ProductInterface) {
+    products.push(data)
   },
-  update(id: string, updateData: InsertProduct) {
-    return ProductQueries.update(id, updateData)
+  update(id: string, updateData: Partial<Omit<ProductInterface, "id">>) {
+    const index = products.findIndex(p => p.id === id)
+
+    if (index === -1) return null
+
+    products[index] = {
+      ...products[index],
+      ...updateData
+    }
+
+    return products[index]
   },
   delete(id: string) {
-    return ProductQueries.delete(id)
+    const index = products.findIndex(p => p.id === id)
+
+    if (index === -1) return null
+
+    products.splice(index, 1)
+
+    return true
   }
 }

@@ -13,11 +13,23 @@ export const useUsers = () => {
     }
   }
 
+  const deleteUser = async (id: string) => {
+    try {
+      await $fetch(`/api/users/${id}`, {
+        method: "DELETE"
+      })
+      await refresh()
+    } catch (error) {
+      console.log("Failed to delete user", error)
+    }
+  }
+
   return {
     users,
     refresh,
     error,
-    createUser
+    createUser,
+    deleteUser
   }
 }
 
