@@ -66,7 +66,7 @@ function onFormSubmit() {
 
   toast.add({ severity: 'success', summary: 'Ditambah', detail: 'Invoice berhasil ditambahkan', life: 3000 });
 
-  navigateTo("/invoices")
+  navigateTo("/dashboard/invoices")
 }
 
 const handleScroll = () => {

@@ -42,7 +42,7 @@ function onFormSubmit() {
   if (validateForm()) {
     createProduct(form)
     toast.add({ severity: 'success', summary: 'Ditambah', detail: 'Product berhasil ditambahkan', life: 3000 });
-    navigateTo("/products")
+    navigateTo("/dashboard/products")
   }
 }
 

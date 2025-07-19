@@ -6,5 +6,4 @@ export const UserSchema = z.object({
   email: z.string(),
   password: z.string(),
   role: z.nativeEnum(Role),
-  isActive: z.boolean(),
 })

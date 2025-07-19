@@ -37,6 +37,13 @@ const menuItems = ref([
     label: 'Users',
     icon: 'pi pi-users',
     to: '/dashboard/users',
+    children: [
+      {
+        label: '+ Create User',
+        to: '/dashboard/users/create',
+        class: 'pl-8 py-2 text-sm text-zinc-600 hover:text-primary'
+      }
+    ]
   }
 ])
 

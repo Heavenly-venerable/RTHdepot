@@ -18,9 +18,8 @@ export const UserController = {
     }
     return existing
   },
-  async createUser(data: Omit<UserInterface, "id" | "password" | "createdAt">) {
+  async createUser(data: Omit<UserInterface, "id" | "password" | "createdAt" | "isActive">) {
     const parsed = UserSchema.safeParse(data)
-
     if (!parsed.success) {
       return {
         success: false,
@@ -45,6 +44,7 @@ export const UserController = {
       id: `u00${users.length + 1}`,
       ...rest,
       password: hashPw,
+      isActive: true,
       createdAt: new Date()
     }
 

@@ -21,10 +21,14 @@ function getSeverity(role) {
   <div class="space-y-4">
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-xl font-semibold">Daftar User</h2>
+      <NuxtLink to="/dashboard/users/create">
+        <Button label="New User" icon="pi pi-plus" />
+      </NuxtLink>
     </div>
     <DataTable :value="users" showGridlines scrollable tableStyle="min-width: 50rem">
       <Column field="id" header="ID"> </Column>
       <Column field="name" header="Name"></Column>
+      <Column field="email" header="Email"></Column>
       <Column header="Role">
         <template #body="slotProps">
           <Tag :value="slotProps.data.role" :severity="getSeverity(slotProps.data.role)" />
