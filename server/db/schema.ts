@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { pgTable, uuid, text, timestamp, primaryKey, customType } from "drizzle-orm/pg-core";
+import { pgTable, boolean, uuid, text, timestamp, primaryKey, customType, pgEnum } from "drizzle-orm/pg-core";
 
 const numericAsNumber = customType<{ data: number, driverData: string }>({
   dataType() {
@@ -9,6 +9,8 @@ const numericAsNumber = customType<{ data: number, driverData: string }>({
     return parseFloat(value)
   },
 })
+
+export const roleEnum = pgEnum("role", ["superadmin", "admin", "staff", "user"])
 
 export const products = pgTable("products", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -35,6 +37,16 @@ export const invoiceItems = pgTable("invoice_items", {
     pk: primaryKey({ columns: [table.invoiceId, table.productId] }),
   };
 });
+
+export const users = pgTable("users", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  email: text("email").notNull().unique(),
+  password: text("password").notNull(),
+  role: roleEnum("role").notNull(),
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+})
 
 export const productRelations = relations(products, ({ many }) => ({
   invoiceItems: many(invoiceItems),
@@ -63,3 +75,6 @@ export type SelectInvoice = typeof invoices.$inferSelect
 
 export type InsertInvoiceItem = typeof invoiceItems.$inferInsert
 export type SelectInvoiceItem = typeof invoiceItems.$inferSelect
+
+export type InsertUser = typeof users.$inferInsert;
+export type SelectUser = typeof users.$inferSelect;

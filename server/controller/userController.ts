@@ -1,7 +1,6 @@
-import { users } from "../data/users"
+import { InsertUser } from "../db/schema"
 import { User } from "../models/user.model"
 import { EditUserSchema, UserSchema } from "../schemas/user"
-import { UserInterface } from "../types/users"
 import type { H3Event } from "h3"
 
 export const UserController = {
@@ -9,7 +8,7 @@ export const UserController = {
     return await User.findAll()
   },
   async getUserById(id: string) {
-    const existing = await User.findOne({ id })
+    const existing = await User.findById(id)
     if (!existing) {
       return {
         success: false,
@@ -18,7 +17,7 @@ export const UserController = {
     }
     return existing
   },
-  async createUser(data: Omit<UserInterface, "id" | "createdAt" | "isActive">) {
+  async createUser(data: InsertUser) {
     const parsed = UserSchema.safeParse(data)
     if (!parsed.success) {
       return {
@@ -30,7 +29,7 @@ export const UserController = {
 
     const { password, ...rest } = parsed.data
 
-    const existingUser = await User.findOne({ email: rest.email })
+    const existingUser = await User.findByEmail(rest.email)
 
     if (existingUser) {
       return {
@@ -40,8 +39,7 @@ export const UserController = {
     }
     const hashPw = await hashPassword(password)
 
-    const newUser: UserInterface = {
-      id: `u00${users.length + 1}`,
+    const newUser: InsertUser = {
       ...rest,
       password: hashPw,
       isActive: true,
@@ -56,7 +54,7 @@ export const UserController = {
     }
   },
   async loginUser(data: { email: string; password: string }, event: H3Event) {
-    const existingUser = await User.findOne({ email: data.email })
+    const existingUser = await User.findByEmail(data.email)
 
     if (!existingUser) {
       return {
@@ -87,8 +85,8 @@ export const UserController = {
       message: "User berhasil login"
     }
   },
-  async updateUser(id: string, data: Partial<UserInterface>) {
-    const user = await User.findOne({ id })
+  async updateUser(id: string, data: InsertUser) {
+    const user = await User.findById(id)
     if (!user) {
       return {
         success: false,
@@ -105,7 +103,7 @@ export const UserController = {
     }
 
     if (parsed.data.email && parsed.data.email !== user.email) {
-      const emailExists = await User.findOne({ email: parsed.data.email })
+      const emailExists = await User.findById(parsed.data.email)
       if (emailExists) {
         return {
           success: false,
@@ -126,7 +124,7 @@ export const UserController = {
     }
   },
   async deleteUser(id: string) {
-    const existing = await User.findOne({ id })
+    const existing = await User.findById(id)
     if (!existing) {
       return {
         success: false,

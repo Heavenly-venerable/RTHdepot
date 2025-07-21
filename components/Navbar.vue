@@ -38,7 +38,7 @@ const menuItems = computed(() => {
   ]
 
   if (hasRole("admin")) {
-    item.push(
+    items.push(
       {
         label: 'Users',
         icon: 'pi pi-users',

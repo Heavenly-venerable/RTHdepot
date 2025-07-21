@@ -1,31 +1,23 @@
-import { users } from "../data/users"
-import { UserInterface } from "../types/users"
+import { InsertUser } from "../db/schema"
+import { UserQueries } from "../queries/user.queries"
 
 export const User = {
   findAll() {
-    return users
+    return UserQueries.findAll()
   },
-  findOne(query: Partial<UserInterface>) {
-    return users.find((user) => {
-      return Object.entries(query).every(([key, value]) => user[key as keyof UserInterface] === value)
-    })
+  findById(id: string) {
+    return UserQueries.findById(id)
   },
-  create(data: UserInterface) {
-    users.push(data)
+  findByEmail(email: string) {
+    return UserQueries.findByEmail(email)
   },
-  update(id: string, updateData: Partial<Omit<UserInterface, "id">>) {
-    const index = users.findIndex(user => user.id === id)
-    if (index === -1) return null
-    users[index] = {
-      ...users[index],
-      ...updateData
-    }
-    return users[index]
+  create(data: InsertUser) {
+    return UserQueries.create(data)
+  },
+  update(id: string, updateData: InsertUser) {
+    return UserQueries.update(id, updateData)
   },
   delete(id: string) {
-    const index = users.findIndex(user => user.id === id)
-    if (index === -1) return null
-    users.splice(index, 1)
-    return true
+    return UserQueries.delete(id)
   }
 } 
