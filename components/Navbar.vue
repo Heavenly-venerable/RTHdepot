@@ -1,51 +1,61 @@
 <script setup lang="ts">
 const { clear: clearSession } = useUserSession()
+const { hasRole } = usePermission()
 const visible = ref(false);
 const route = useRoute()
 
-const menuItems = ref([
-  {
-    label: 'Dashboard',
-    icon: 'pi pi-home',
-    to: '/dashboard'
-  },
-  {
-    label: 'Invoices',
-    icon: 'pi pi-file',
-    to: '/dashboard/invoices',
-    children: [
+const menuItems = computed(() => {
+  const items = [
+    {
+      label: 'Dashboard',
+      icon: 'pi pi-home',
+      to: '/dashboard'
+    },
+    {
+      label: 'Invoices',
+      icon: 'pi pi-file',
+      to: '/dashboard/invoices',
+      children: [
+        {
+          label: '+ Create Invoice',
+          to: '/dashboard/invoices/create',
+          class: 'pl-8 py-2 text-sm text-zinc-600 hover:text-primary'
+        }
+      ]
+    },
+    {
+      label: 'Products',
+      icon: 'pi pi-box',
+      to: '/dashboard/products',
+      children: [
+        {
+          label: '+ Create Product',
+          to: '/dashboard/products/create',
+          class: 'pl-8 py-2 text-sm text-zinc-600 hover:text-primary'
+        }
+      ]
+    }
+  ]
+
+  if (hasRole("admin")) {
+    item.push(
       {
-        label: '+ Create Invoice',
-        to: '/dashboard/invoices/create',
-        class: 'pl-8 py-2 text-sm text-zinc-600 hover:text-primary'
+        label: 'Users',
+        icon: 'pi pi-users',
+        to: '/dashboard/users',
+        children: [
+          {
+            label: '+ Create User',
+            to: '/dashboard/users/create',
+            class: 'pl-8 py-2 text-sm text-zinc-600 hover:text-primary'
+          }
+        ]
       }
-    ]
-  },
-  {
-    label: 'Products',
-    icon: 'pi pi-box',
-    to: '/dashboard/products',
-    children: [
-      {
-        label: '+ Create Product',
-        to: '/dashboard/products/create',
-        class: 'pl-8 py-2 text-sm text-zinc-600 hover:text-primary'
-      }
-    ]
-  },
-  {
-    label: 'Users',
-    icon: 'pi pi-users',
-    to: '/dashboard/users',
-    children: [
-      {
-        label: '+ Create User',
-        to: '/dashboard/users/create',
-        class: 'pl-8 py-2 text-sm text-zinc-600 hover:text-primary'
-      }
-    ]
+    )
   }
-])
+
+  return items
+})
 
 async function logout() {
   await clearSession();

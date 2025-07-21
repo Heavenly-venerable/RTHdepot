@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const { users } = useUsers()
-const { canView, canCreate, canEdit, canDelete } = usePermission()
+const { canView, canCreate, canEdit, canDelete, hasRole } = usePermission()
 
 const editForm = ref(null)
 const visible = ref(false)
@@ -27,10 +27,10 @@ function getSeverity(role) {
 </script>
 
 <template>
-  <div v-if="canView" class="space-y-4">
+  <div v-if="hasRole('admin')" class="space-y-4">
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-xl font-semibold">Daftar User</h2>
-      <NuxtLink v-if="canCreate" to="/dashboard/users/create">
+      <NuxtLink v-if="hasRole('admin')" to="/dashboard/users/create">
         <Button label="New User" icon="pi pi-plus" />
       </NuxtLink>
     </div>
@@ -57,7 +57,8 @@ function getSeverity(role) {
       <Column>
         <template #body="slotProps">
           <div class="flex justify-center items-center gap-x-2">
-            <Button v-if="canEdit" @click="onEdit(slotProps.data)" severity="warn" rounded icon="pi pi-pencil" />
+            <Button v-if="hasRole('admin')" @click="onEdit(slotProps.data)" severity="warn" rounded
+              icon="pi pi-pencil" />
             <ConfirmDialogDeleteUser v-if="canDelete" :id="slotProps.data.id" />
           </div>
         </template>
