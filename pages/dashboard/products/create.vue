@@ -1,5 +1,5 @@
 <script setup lang="ts">
-definePageMeta({ middleware: ["auth"], layout: 'dashboard' })
+definePageMeta({ middleware: ["auth", "role-auth"], layout: 'dashboard', requiredRole: "staff" })
 </script>
 
 <template>

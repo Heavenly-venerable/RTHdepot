@@ -65,9 +65,8 @@ export const UserController = {
       }
     }
 
-    const validPassword = await verifyPassword(existingUser.password, data.password)
-
-    if (!validPassword) {
+    const hashPw = await hashPassword(existingUser.password)
+    if (!await verifyPassword(hashPw, data.password)) {
       return {
         success: false,
         message: "Invalid credentials"

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const { products } = useProducts()
+const { canView, canCreate, canEdit, canDelete } = usePermission()
 
 const editForm = ref(null)
 const visible = ref(false)
@@ -15,10 +16,10 @@ const onEdit = (data: any) => {
 </script>
 
 <template>
-  <div class="space-y-4">
+  <div v-if="canView" class="space-y-4">
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-xl font-semibold">Daftar Product</h2>
-      <NuxtLink to="/dashboard/products/create">
+      <NuxtLink v-if="canCreate" to="/dashboard/products/create">
         <Button label="New Product" icon="pi pi-plus" />
       </NuxtLink>
     </div>
@@ -38,8 +39,8 @@ const onEdit = (data: any) => {
       <Column>
         <template #body="slotProps">
           <div class="flex justify-center items-center gap-x-2">
-            <Button @click="onEdit(slotProps.data)" severity="warn" rounded icon="pi pi-pencil" />
-            <ConfirmDialogDeleteProduct :id="slotProps.data.id" />
+            <Button v-if="canEdit" @click="onEdit(slotProps.data)" severity="warn" rounded icon="pi pi-pencil" />
+            <ConfirmDialogDeleteProduct v-if="canDelete" :id="slotProps.data.id" />
           </div>
         </template>
       </Column>
@@ -53,5 +54,10 @@ const onEdit = (data: any) => {
     <Dialog v-model:visible="visible" modal header="Edit Product" class="w-80">
       <ProductEdit v-model:visible="visible" :product="editForm" />
     </Dialog>
+  </div>
+  <div v-else>
+    <p class="text-center text-red-500 font-semibold">
+      Anda tidak memiliki akses melihat halaman ini.
+    </p>
   </div>
 </template>

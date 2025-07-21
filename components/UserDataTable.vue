@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const { users } = useUsers()
+const { canView, canCreate, canEdit, canDelete } = usePermission()
 
 const editForm = ref(null)
 const visible = ref(false)
@@ -26,10 +27,10 @@ function getSeverity(role) {
 </script>
 
 <template>
-  <div class="space-y-4">
+  <div v-if="canView" class="space-y-4">
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-xl font-semibold">Daftar User</h2>
-      <NuxtLink to="/dashboard/users/create">
+      <NuxtLink v-if="canCreate" to="/dashboard/users/create">
         <Button label="New User" icon="pi pi-plus" />
       </NuxtLink>
     </div>
@@ -56,8 +57,8 @@ function getSeverity(role) {
       <Column>
         <template #body="slotProps">
           <div class="flex justify-center items-center gap-x-2">
-            <Button @click="onEdit(slotProps.data)" severity="warn" rounded icon="pi pi-pencil" />
-            <ConfirmDialogDeleteUser :id="slotProps.data.id" />
+            <Button v-if="canEdit" @click="onEdit(slotProps.data)" severity="warn" rounded icon="pi pi-pencil" />
+            <ConfirmDialogDeleteUser v-if="canDelete" :id="slotProps.data.id" />
           </div>
         </template>
       </Column>
@@ -71,5 +72,10 @@ function getSeverity(role) {
     <Dialog v-model:visible="visible" modal header="Edit User" class="w-80">
       <UserEdit v-model:visible="visible" :user="editForm" />
     </Dialog>
+  </div>
+  <div v-else>
+    <p class="text-center text-red-500 font-semibold">
+      Anda tidak memiliki akses melihat halaman ini.
+    </p>
   </div>
 </template>

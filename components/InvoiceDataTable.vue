@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const { invoices, status } = useInvoices()
+const { canView, canCreate, canEdit, canDelete } = usePermission()
 
 const editForm = ref(null)
 const visible = ref(false)
@@ -15,10 +16,10 @@ const onEdit = (data: any) => {
 </script>
 
 <template>
-  <div class="space-y-4">
+  <div v-if="canView" class="space-y-4">
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-xl font-semibold">Daftar Invoice</h2>
-      <NuxtLink to="/dashboard/invoices/create">
+      <NuxtLink v-if="canCreate" to="/dashboard/invoices/create">
         <Button label="New Invoice" icon="pi pi-plus" />
       </NuxtLink>
     </div>
@@ -49,11 +50,11 @@ const onEdit = (data: any) => {
       <Column>
         <template #body="slotProps">
           <div class="flex justify-center items-center gap-x-2">
-            <NuxtLink :to="{ path: `/dashboard/invoices/${slotProps.data.id}` }">
+            <NuxtLink v-if="canView" :to="{ path: `/dashboard/invoices/${slotProps.data.id}` }">
               <Button rounded severity="info" icon="pi pi-eye" />
             </NuxtLink>
-            <Button @click="onEdit(slotProps.data)" severity="warn" rounded icon="pi pi-pencil" />
-            <ConfirmDialogDeleteInvoice :id="slotProps.data.id" />
+            <Button v-if="canEdit" @click="onEdit(slotProps.data)" severity="warn" rounded icon="pi pi-pencil" />
+            <ConfirmDialogDeleteInvoice v-if="canDelete" :id="slotProps.data.id" />
           </div>
         </template>
       </Column>
@@ -64,6 +65,11 @@ const onEdit = (data: any) => {
     <Dialog v-model:visible="visible" modal header="Edit Invoice" class="w-80">
       <InvoiceEdit v-model:visible="visible" :invoice="editForm" />
     </Dialog>
+  </div>
+  <div v-else>
+    <p class="text-center text-red-500 font-semibold">
+      Anda tidak memiliki akses melihat halaman ini.
+    </p>
   </div>
 </template>
 
