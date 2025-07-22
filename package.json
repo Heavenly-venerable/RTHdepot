@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@primevue/nuxt-module": "^4.3.5",
+    "@types/web-bluetooth": "^0.0.21",
     "drizzle-kit": "^0.31.4",
     "typescript": "5.8.2",
     "vue-tsc": "2.2.8"

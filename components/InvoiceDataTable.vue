@@ -4,6 +4,7 @@ const { canView, canCreate, canEdit, canDelete } = usePermission()
 
 const editForm = ref(null)
 const visible = ref(false)
+const { $bluetooth } = useNuxtApp()
 
 const calculateTotal = (items) => {
   return items.reduce((total, item) => item.quantity * item.price + total, 0)
@@ -13,15 +14,77 @@ const onEdit = (data: any) => {
   editForm.value = data
   visible.value = true
 }
+
+const printerChar = ref<BluetoothRemoteGATTCharacteristic | null>(null)
+
+async function connect() {
+  try {
+    const { characteristic } = await $bluetooth.requestPrinter()
+    printerChar.value = characteristic!
+    alert('Printer connected 🎉')
+  } catch (e) {
+    console.error('Error connect:', e)
+    alert('Failed to connect printer')
+  }
+}
+
+async function printInvoice() {
+  if (!printerChar.value || !invoices.value || invoices.value.length === 0) return
+
+  const invoice = invoices.value[0]
+
+  const commands = [
+    toEscPos('\x1B\x40'), // initialize
+
+    // H1 - Judul Toko Besar
+    toEscPos('\x1D\x21\x00'),
+    toEscPos('*** DEPOT RTH ***'),
+
+    // H2 - Informasi Invoice
+    toEscPos('\x1D\x21\x00'),
+    toEscPos(`Invoice #: INV-${invoice.id}`),
+    toEscPos(`Tanggal : ${formatDate(invoice.createAt)}`),
+    toEscPos(`Nama Nelayan: ${invoice.partner}`),
+
+    // Normal size untuk isi item
+    toEscPos('\x1D\x21\x00'),
+    ...invoice.items.map((item: any) => {
+      const name = item.product.name.padEnd(14)
+      const qtyPrice = `${item.quantity} x ${formatCurrency(item.price)}`
+      return toEscPos(`${name}${qtyPrice}`)
+    }),
+
+    toEscPos('--------------------------'),
+
+    // H2 - Total
+    toEscPos('\x1D\x21\x01'),
+    toEscPos(`Total: ${formatCurrency(invoice.total)}`),
+
+    // Footer Normal
+    toEscPos('\x1D\x21\x00'),
+    toEscPos('\n\n'),
+    toEscPos('Terima kasih'),
+    toEscPos('\n\n'),
+  ]
+
+  for (const cmd of commands) {
+    await $bluetooth.send(printerChar.value, cmd)
+  }
+
+  alert('Invoice sent to printer')
+}
 </script>
 
 <template>
   <div v-if="canView" class="space-y-4">
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-xl font-semibold">Daftar Invoice</h2>
-      <NuxtLink v-if="canCreate" to="/dashboard/invoices/create">
-        <Button label="New Invoice" icon="pi pi-plus" />
-      </NuxtLink>
+      <div class="flex items-center gap-2">
+        <Button label="Connect Printer" icon="pi pi-bluetooth" severity="secondary" @click="connect" />
+        <NuxtLink v-if="canCreate" to="/dashboard/invoices/create">
+          <Button label="New Invoice" icon="pi pi-plus" />
+        </NuxtLink>
+      </div>
     </div>
     <DataTable :value="invoices" showGridlines scrollable tableStyle="min-width: 50rem" :loading="status.pending">
       <Column field="id" header="Invoice ID" />
@@ -55,6 +118,7 @@ const onEdit = (data: any) => {
             </NuxtLink>
             <Button v-if="canEdit" @click="onEdit(slotProps.data)" severity="warn" rounded icon="pi pi-pencil" />
             <ConfirmDialogDeleteInvoice v-if="canDelete" :id="slotProps.data.id" />
+            <Button rounded severity="text" icon="pi pi-printer" @click="printInvoice(slotProps.data)" />
           </div>
         </template>
       </Column>
