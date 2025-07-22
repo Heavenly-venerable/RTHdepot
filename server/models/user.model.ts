@@ -14,7 +14,7 @@ export const User = {
   create(data: InsertUser) {
     return UserQueries.create(data)
   },
-  update(id: string, updateData: InsertUser) {
+  update(id: string, updateData: Partial<InsertUser>) {
     return UserQueries.update(id, updateData)
   },
   delete(id: string) {

@@ -20,7 +20,7 @@ export const UserQueries = {
   async create(data: InsertUser) {
     await db.insert(users).values(data)
   },
-  async update(id: string, updateData: InsertUser) {
+  async update(id: string, updateData: Partial<InsertUser>) {
     const existing = await UserQueries.findById(id)
     if (!existing) return null
     const updated = { ...existing, ...updateData }

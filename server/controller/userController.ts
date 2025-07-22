@@ -63,8 +63,8 @@ export const UserController = {
       }
     }
 
-    const hashPw = await hashPassword(existingUser.password)
-    if (!await verifyPassword(hashPw, data.password)) {
+    const isValidPassword = await verifyPassword(existingUser.password, data.password)
+    if (!isValidPassword) {
       return {
         success: false,
         message: "Invalid credentials"
@@ -85,7 +85,7 @@ export const UserController = {
       message: "User berhasil login"
     }
   },
-  async updateUser(id: string, data: InsertUser) {
+  async updateUser(id: string, data: Partial<InsertUser>) {
     const user = await User.findById(id)
     if (!user) {
       return {
@@ -102,8 +102,10 @@ export const UserController = {
       }
     }
 
-    if (parsed.data.email && parsed.data.email !== user.email) {
-      const emailExists = await User.findById(parsed.data.email)
+    const updates = parsed.data
+
+    if (updates.email && updates.email !== user.email) {
+      const emailExists = await User.findByEmail(updates.email)
       if (emailExists) {
         return {
           success: false,
@@ -112,15 +114,16 @@ export const UserController = {
       }
     }
 
-    const updated = await User.update(id, {
-      ...user,
-      ...parsed.data
-    })
+    let finalData: Partial<InsertUser> = { ...updates }
+    if (updates.password) {
+      finalData.password = await hashPassword(updates.password)
+    }
+    const updatedUser = await User.update(id, finalData)
 
     return {
       success: true,
       message: `User dengan ID: ${id} berhasil diperbarui`,
-      updated
+      updated: updatedUser
     }
   },
   async deleteUser(id: string) {

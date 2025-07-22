@@ -63,7 +63,9 @@ function validateForm() {
 
 async function onFormSubmit() {
   if (!validateForm()) return
-  await updateUser(form)
+  const payload = { ...form }
+  if (!payload.password) delete payload.password
+  await updateUser(payload)
   await refresh()
   toast.add({ severity: 'info', summary: 'Diedit', detail: 'User berhasil diedit', life: 3000 });
   emit("update:visible", !props.visible)

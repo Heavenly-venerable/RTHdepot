@@ -13,6 +13,11 @@ async function onFormSubmit() {
   try {
     isLoading.value = true
 
+    if (!form.email || !form.password) {
+      toast.add({ severity: "warn", summary: "Isi semua field", life: 3000 })
+      return
+    }
+
     const response = await $fetch("/api/auth/login", {
       method: "POST",
       body: form
